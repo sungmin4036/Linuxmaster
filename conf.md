@@ -547,3 +547,149 @@ squid.conf
 >http_access deny all
 > 
 > 192.168.3.0 네트워크주소를 members 범위로 규정하여 http_access 에서 프록시서버 접속을 >허용하고, 다른 네트워크에 대해서는 접속을 거부한다.
+
+***
+#### xinetd 설정 파일
+- 네트워크 서버/클라이언트 구조에서 다양한 서비스( FTP, Telnet, SSH 등등 ) 서버 프로세스(데몬) 동작 방식은 공통점이 있습니다.
+
+실제 서비스를 제공하는 서비스 프로세스를 제외하고는 클라이언트의 접속 요청이 있을 때까지 대기하다가 요청이 들어오면 해당 요청을 처리할 서비스 프로세스(자식 프로세스)를 실행하는 형태입니다.
+
+데몬을  관리하는 데몬입니다. 이것을 슈퍼 데몬이라고 부릅니다.
+inted의 후속 버전입니다. 
+    
+            
+xinetd 설정 파일의 위치는 /etc/xinetd.conf입니다.            
+            
+xinetd.conf 파일에는 default 설정 값이 포함되어있습니다.
+
+서비스별로 개별적인 설정이 필요한 경우 /etc/xinetd.d/ 밑에 서비스 별 설정 파일을 수정할 수 있습니다.
+
+ 
+
+ This is the master xinetd configuration file. Settings in the
+ default section will be inherited by all service configurations
+ unless explicitly overridden in the service configuration. See
+xinetd.conf in the man pages for a more detailed explanation of
+defaults
+{
+# The next two items are intended to be a quick access place to
+# temporarily enable or disable services.
+#
+#       enabled         =
+#       disabled        =
+
+# Define general logging characteristics.
+        log_type        = SYSLOG daemon info
+        log_on_failure  = HOST
+        log_on_success  = PID HOST DURATION EXIT
+
+# Define access restriction defaults
+#
+#       no_access       =
+#       only_from       =
+#       max_load        = 0
+        cps             = 50 10
+        instances       = 50
+        per_source      = 10
+
+# Address and networking defaults
+#
+3-1  /etc/xinetd.conf 파일
+ 
+
+1. log_type = SYSLOG | FILE
+
+- 로그파일을 rsyslog 등 시스템 로그에서 관리되도록 위임하거나, 별도의 파일로 선택할 수 있습니다.
+
+ 
+
+2. log_on_failure = HOST | USERID | ATTEMPT
+
+- 접속에 실패했을 때 기록될 값을 정합니다.
+
+ 
+
+3. log_on_success = PID | HOST | USERID | EXIT | DURATION | TRAFFIC
+
+- 접속에 성공했을 때 기록될 값입니다.
+
+ 
+
+4. cps = [초당 요청수] [제한시간]
+
+- 초당 요청수만큼을 초과할 경우 제한시간에 설정된 초만큼 접속을 중단시킵니다.
+
+ 
+
+5. instances = 최대 서버수
+
+- 동시에 서비스할 수 있는 서버의 최대 서버 수를 지정합니다.
+
+ 
+
+6. per_source = 최대 접속수
+
+- 같은 IP에서 접속할 수 있는 최대 서비스 수입니다.
+
+ 
+
+7. only_form = 접속 가능한 호스트
+
+no_access = 접속 불가능한 호스트
+
+- only_form과 no_access가 중복되면 차단됩니다.
+
+ 
+
+8. enabled = 사용 가능한 서비스 목록
+
+disabled = 사용 불가능한 서비스 목록
+
+- enabled과 disabled가 중복되면 차단됩니다.
+
+ 
+
+3-2  /etc/xinetd.d 
+cat /etc/xinetd/rsync 파일
+[root@localhost xinetd.d]# cat rsync
+# default: off
+# description: The rsync server is a good addition to an ftp server, as it \
+# allows crc checksumming etc.
+service rsync
+{
+disable = yes
+flags = IPv6
+socket_type     = stream
+wait            = no
+user            = root
+server          = /usr/bin/rsync
+server_args     = --daemon
+log_on_failure  += USERID
+}
+[root@localhost xinetd.d]# 
+ 
+
+디렉터리 하위에 서비스 명으로 된 설정 파일을 만들어 서비스(ssh, ftp 등등) 별로 설정할 수 있습니다. 
+서비스명은 /etc/서비스 이름과 동일하게 맞추고. conf는 안 붙입니다. 
+
+ 
+
+1. socket_type : stream, dgram, raw값을 지정할 수 있습니다.
+
+ 
+
+2. user : 서비스를 사용할 사용자의 이름입니다.
+
+ 
+
+3. wait : yes는 단일 스레드, no는 다중 스레드로 동작합니다.
+
+ 
+
+4. server : 서비스가 연결되었을 때 실행할 프로그램입니다.
+
+ 
+
+이 외에도 xinetd.conf 상의 설정값들은 대부분 이용 가능하다. access_time, redirect, port, nice 등의 설정도 가능합니다.
+
+          
