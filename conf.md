@@ -700,11 +700,12 @@ NIS는 passwd나 group등의 네트워크 정보 파일들을 하나의 서버�
 서버에서 제공하는 새로운 정보를 받을 수 있도록 하는 것이다. 
 
 ㅁ NIX 관련 폴더
-ypbind : 클라이언트 프로그램
-yp-tools : NIS 명령 패키지
-ypserv : 서버 프로그램
+ypbind : 클라이언트 프로그램           
+yp-tools : NIS 명령 패키지          
+ypserv : 서버 프로그램               
             
 ㅁ NIS 관련 명령어
+            
 (1) nisdomainname
    1) 설명: NIS 도메인이름을 보여주거나 지정하는 명령이다.
    2) 사용법
@@ -715,7 +716,8 @@ ypserv : 서버 프로그램
          => 현재 설정된 NIS 도메인이름을 보여준다.
     ㄴ. [root@linux245 root]# nisdomainname test.co.kr
          => NIS 도메인을 test.co.kr로 지정한다.
-(2) ypwhich
+
+            (2) ypwhich
    1) 설명: NIS 클라이언트에서 사용하는 명령어로 NIS 서버의 이름과 관련 맵파일을 보여준다.
    2) 사용법
      ypwhich [option]
@@ -727,6 +729,7 @@ ypserv : 서버 프로그램
          => NIS서버의 보여준다.
     ㄴ. [root@linux246 root]# ypwhich -m
          => NIS 서버관련 맵파일을 보여준다.
+
 (3) ypcat
    1) 설명: NIS 클라이언트에서 사용하는 명령어로 NIS 서버의 데이타베이스라고 할 수 있는 맵파일
            의 내용을 확인하는 명령이다.
@@ -738,6 +741,7 @@ ypserv : 서버 프로그램
          => 호스트관련정보를 보여준다.
     ㄴ. [root@linux246 root]# ypcat passwd.byname
          => NIS 서버의 사용자관련 정보를 보여준다.
+
 (4) yppasswd
     1) 설명: NIS 클라이언트에서 NIS 서버에 등록된 사용자의 패스워드를 변경하는 명령이다. 물론
            변경하려면 NIS 서버의 root 패스워드도 알아야 한다.
@@ -745,12 +749,14 @@ ypserv : 서버 프로그램
       yppasswd 사용자계정
     3) 사용예
       ypasswd testuser
+
 (5) ypchsh
    1) 설명: NIS 클라이언트에서 NIS 서버에 등록된 사용자의 쉘을 변경하는 명령이다.
    2) 사용법
      ypchsh 사용자계정
    3) 사용예
      ypchsh testuser
+            
 (6) ypchfn
    1) 설명: NIS 클라이언트에서 NIS 서버에 등록된 사용자의 정보를 변경하는 명령이다.
    2) 사용법
