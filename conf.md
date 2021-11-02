@@ -652,44 +652,36 @@ disabled = 사용 불가능한 서비스 목록
 3-2  /etc/xinetd.d 
 cat /etc/xinetd/rsync 파일
 [root@localhost xinetd.d]# cat rsync
-# default: off
-# description: The rsync server is a good addition to an ftp server, as it \
-# allows crc checksumming etc.
-service rsync
-{
-disable = yes
-flags = IPv6
-socket_type     = stream
-wait            = no
-user            = root
-server          = /usr/bin/rsync
-server_args     = --daemon
-log_on_failure  += USERID
-}
-[root@localhost xinetd.d]# 
+> \# default: off
+> \# description: The rsync server is a good addition to an ftp server, as it \
+> \# allows crc checksumming etc.
+> service rsync
+> {
+> disable = yes
+> flags = IPv6
+> socket_type     = stream
+> wait            = no
+> user            = root
+> server          = /usr/bin/rsync
+> server_args     = --daemon
+> log_on_failure  += USERID
+> }
+> [root@localhost xinetd.d]\# 
  
 
 디렉터리 하위에 서비스 명으로 된 설정 파일을 만들어 서비스(ssh, ftp 등등) 별로 설정할 수 있습니다. 
 서비스명은 /etc/서비스 이름과 동일하게 맞추고. conf는 안 붙입니다. 
 
  
-
 1. socket_type : stream, dgram, raw값을 지정할 수 있습니다.
 
- 
-
 2. user : 서비스를 사용할 사용자의 이름입니다.
-
  
-
 3. wait : yes는 단일 스레드, no는 다중 스레드로 동작합니다.
-
- 
 
 4. server : 서비스가 연결되었을 때 실행할 프로그램입니다.
 
  
-
 이 외에도 xinetd.conf 상의 설정값들은 대부분 이용 가능하다. access_time, redirect, port, nice 등의 설정도 가능합니다.
 
           
