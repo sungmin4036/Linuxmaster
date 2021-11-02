@@ -72,6 +72,82 @@
 - DocumentRoot    "/usr/local/apache/htdocs"
 : 아파치의 웹 문서들의 루트 디렉토리를 지정한다.
 
+ㅁ 아파치 관련 명령어
+: systemctl, httpd 또는 apachectl 을 사용합니다.
+
+- Apache 버전 확인
+> httpd -v
+
+- Apache 상태 확인
+> systemctl status httpd
+> service httpd status
+
+- Apache 시작
+> systemctl start httpd
+> service httpd start
+> apachectl start
+
+- Apache 중지
+> systemctl stop httpd
+> service httpd stop
+> apachectl stop
+
+-  Apache 재시작
+> systemctl restart httpd
+> service httpd restart
+> apachectl restart
+
+|옵션|내용|
+|---|---|
+|-d| serverroot  -> ServerRoot 변수를 초기값으로 지정. |
+|-D| name -> IfDefine 선언에서 사용되는 이름을 정의. |
+|-f| config(설정파일이름) -> 설정파일을 지정해서 아파치를 실행. |
+|-C| "directive" -> 정규적인 설정파일을 실제로 읽기 전에 주어진 선언으로 처리합니다. (설정파일의 부분이어야 합니다.|
+|-c| "directive" -> 모든 정규 설정파일을 읽은 후에 주어진 선언을 처리합니다.|
+|-X|   -> 내부디버깅을 목적으로 하나의 프로세스로 실행되는 모드입니다.|
+|-v|   -> 버전과 빌드 정보를 출력하고 종료합니다.|
+|-V|   -> 버전과 빌드 정보, 그리고 컴파일(Compile) 시 셋팅을 출력하고 종료합니다.|
+|-L|   -> 기대되는 인수와 선언이 타당한 곳 과 함께 선언들의 목록을 제공하고 종료합니다.|
+|-l|    -> 서버로 컴파일(Compile) 된 모든 모듈들의 목록을 제공하고 종료합니다.|
+|-h|   -> 도움말 출력. |
+|-S|   -> 가상호스트의 설정을 보여줍니다. 서버는 실행되지 않습니다.|
+|-t|    -> 설정파일의 문법(syntax)을 테스트합니다. 모든 설정파일을 읽고, 그것을 해석합니다. |
+|-T|   -> 설정파일의 문법(syntax)을 테스트합니다. 모든 설정파일을 읽고, 그것을 해석합니다. |
+|-k| option [restart/shutdown]  -> Windows only: 아파치 서버에 재시작 또는 종료의 신호를 보냅니다.(Apache 1.3.3 이상 ).|
+
+
+ㅁ htpasswd
+사용방법
+
+> htpasswd [ -c ] [ -m ] [ -D ] passwdfile username
+
+> htpasswd -b [ -c ] [ -m | -d | -p | -s ] [ -D ] passwdfile username password
+
+> htpasswd -n [ -m | -d | -s | -p ] username
+
+> htpasswd -nb [ -m | -d | -s | -p ] username password
+
+
+|옵션|설명|
+|---|---|
+|-b|배치(batch) 모드를 사용한다. 예를 들어, 암호를 물어보지않고 명령행에서 받는다. 명령행에 암호가 직접 드러나므로, 이 옵션은 매우 조심해서 사용해야 한다.|
+|-c|passwdfile을 만든다. passwdfile이 이미 존재한다면, 덮어쓴다. 이 옵션을 -n 옵션과 같이 사용할 수 없다.|
+|-n|파일을 수정하지않고 결과를 표준출력으로 출력한다. 아파치가 문서이외의 곳에 생성한 암호를 저장할때 유용하다. (항상 첫번째 아규먼트인) passwdfile 아규먼트가 없기때문에 명령행 문법이 다르다. -c 옵션과 같이 사용할 수 없다.|
+|-m|MD5를 사용하여 암호를 암호화한다. Windows, Netware, TPF에서 기본값이다.|
+|-d|crypt()를 사용하여 암호를 암호화한다. Windows, Netware, TPF를 제외한 모든 플래폼에서 기본값이다. 모든 플래폼의 htpasswd가 이 형식을 지원할 수는 있지만, Windows, Netware, TPF의 httpd 서버는 이 형식을 지원하지 않는다.|
+|-s|암호를 SHA 암호화한다. LDAP 디렉토리교환형식(ldif)을 사용하여 Netscape 서버로 정보를 보내거나 거져올때 유용하다.|
+|-p|암호를 그대로 사용한다. 모든 플래폼의 htpasswd가 지원하지만, Windows, Netware, TPF의 httpd 데몬만이 일반 암호를 받는다.|
+|-D|사용자를 삭제한다. htpasswd 파일에 사용자명이 있다면 삭제한다.|
+
+- passwdfile
+사용자명과 암호를 저장하는 파일명. -c를 사용한 경우 파일이 없다면 새로 만들고, 있다면 덮어쓴다.
+
+- username
+passwdfile에 만들거나 수정할 사용자명. username이 이 파일에 없다면 항목을 추가한다. 있다면 암호를 수정한다.
+
+- password
+암호화하여 파일에 저장할 암호. 오직 -b 옵션과 같이 사용할 수 있다.
+
 ***
 #### DNS 설정
 
@@ -572,83 +648,65 @@ xinetd.conf 파일에는 default 설정 값이 포함되어있습니다.
 xinetd.conf in the man pages for a more detailed explanation of
 defaults
 {
-# The next two items are intended to be a quick access place to
-# temporarily enable or disable services.
-#
-#       enabled         =
-#       disabled        =
+> \# The next two items are intended to be a quick access place to
+> \# temporarily enable or disable services.
+> \#
+> \#       enabled         =
+> \#       disabled        =
+> 
+> \# Define general logging characteristics.
+>         log_type        = SYSLOG daemon info
+>         log_on_failure  = HOST
+>         log_on_success  = PID HOST DURATION EXIT
+> 
+> \# Define access restriction defaults
+> \#
+> \#       no_access       =
+> \#       only_from       =
+> \#       max_load        = 0
+>         cps             = 50 10
+>         instances       = 50
+>         per_source      = 10
+> 
+> \# Address and networking defaults
+> \#
 
-# Define general logging characteristics.
-        log_type        = SYSLOG daemon info
-        log_on_failure  = HOST
-        log_on_success  = PID HOST DURATION EXIT
-
-# Define access restriction defaults
-#
-#       no_access       =
-#       only_from       =
-#       max_load        = 0
-        cps             = 50 10
-        instances       = 50
-        per_source      = 10
-
-# Address and networking defaults
-#
 3-1  /etc/xinetd.conf 파일
  
 
 1. log_type = SYSLOG | FILE
+: 로그파일을 rsyslog 등 시스템 로그에서 관리되도록 위임하거나, 별도의 파일로 선택할 수 있습니다.
 
-- 로그파일을 rsyslog 등 시스템 로그에서 관리되도록 위임하거나, 별도의 파일로 선택할 수 있습니다.
-
- 
+<br> 
 
 2. log_on_failure = HOST | USERID | ATTEMPT
-
-- 접속에 실패했을 때 기록될 값을 정합니다.
-
+: 접속에 실패했을 때 기록될 값을 정합니다.
+<br>
  
-
 3. log_on_success = PID | HOST | USERID | EXIT | DURATION | TRAFFIC
-
-- 접속에 성공했을 때 기록될 값입니다.
-
+: 접속에 성공했을 때 기록될 값입니다.
+<br>
  
-
 4. cps = [초당 요청수] [제한시간]
-
-- 초당 요청수만큼을 초과할 경우 제한시간에 설정된 초만큼 접속을 중단시킵니다.
-
+: 초당 요청수만큼을 초과할 경우 제한시간에 설정된 초만큼 접속을 중단시킵니다.
+<br>
  
-
 5. instances = 최대 서버수
-
-- 동시에 서비스할 수 있는 서버의 최대 서버 수를 지정합니다.
-
+: 동시에 서비스할 수 있는 서버의 최대 서버 수를 지정합니다.
+<br>
  
-
 6. per_source = 최대 접속수
-
-- 같은 IP에서 접속할 수 있는 최대 서비스 수입니다.
-
- 
-
+: 같은 IP에서 접속할 수 있는 최대 서비스 수입니다.
+<br>
 7. only_form = 접속 가능한 호스트
-
-no_access = 접속 불가능한 호스트
-
-- only_form과 no_access가 중복되면 차단됩니다.
-
- 
-
+: no_access = 접속 불가능한 호스트
+\# only_form과 no_access가 중복되면 차단됩니다.
+<br>
 8. enabled = 사용 가능한 서비스 목록
-
-disabled = 사용 불가능한 서비스 목록
-
-- enabled과 disabled가 중복되면 차단됩니다.
+: disabled = 사용 불가능한 서비스 목록
+\# enabled과 disabled가 중복되면 차단됩니다.
 
  
-
 3-2  /etc/xinetd.d 
 cat /etc/xinetd/rsync 파일
 [root@localhost xinetd.d]# cat rsync
@@ -690,8 +748,10 @@ cat /etc/xinetd/rsync 파일
 NFS는 사용자들의 home디렉토리들이 어느 시스템에서나 동일하게 보여지도록 하며, 
 NIS는 passwd나 group등의 네트워크 정보 파일들을 하나의 서버에서 관리하도록 하여 나머지 시스템에서 
 서버에서 제공하는 새로운 정보를 받을 수 있도록 하는 것이다. 
+***
+##### ㅁ NIS
 
-ㅁ NIX 관련 폴더
+ㅁ NIS 관련 폴더
 ypbind : 클라이언트 프로그램           
 yp-tools : NIS 명령 패키지          
 ypserv : 서버 프로그램               
@@ -699,63 +759,215 @@ ypserv : 서버 프로그램
 ㅁ NIS 관련 명령어
             
 (1) nisdomainname
-   1) 설명: NIS 도메인이름을 보여주거나 지정하는 명령이다.
-   2) 사용법
-     nisdomainname [NIS 도메인이름]
-   3) 사용예
-    ㄱ. [root@linux245 root]# nisdomainname
+: NIS 도메인이름을 보여주거나 지정하는 명령이다.
+- 사용법
+ nisdomainname [NIS 도메인이름]
+- 사용예
+> [root@linux245 root]# nisdomainname
         test.co.kr
-         => 현재 설정된 NIS 도메인이름을 보여준다.
-    ㄴ. [root@linux245 root]# nisdomainname test.co.kr
-         => NIS 도메인을 test.co.kr로 지정한다.
+  => 현재 설정된 NIS 도메인이름을 보여준다.
 
-            (2) ypwhich
-   1) 설명: NIS 클라이언트에서 사용하는 명령어로 NIS 서버의 이름과 관련 맵파일을 보여준다.
-   2) 사용법
-     ypwhich [option]
-   3) option
+> [root@linux245 root]# nisdomainname test.co.kr
+  => NIS 도메인을 test.co.kr로 지정한다.
+
+(2) ypwhich
+: NIS 클라이언트에서 사용하는 명령어로 NIS 서버의 이름과 관련 맵파일을 보여준다.
+- 사용법
+> ypwhich [option]
+  
+ option
      -m : NIS 서버관련 맵파일을 보여준다.
-   4) 사용예
-    ㄱ. [root@linux246 root]# ypwhich
+- 사용예
+> [root@linux246 root]# ypwhich
         nis.test.co.kr
          => NIS서버의 보여준다.
-    ㄴ. [root@linux246 root]# ypwhich -m
+  
+> [root@linux246 root]# ypwhich -m
          => NIS 서버관련 맵파일을 보여준다.
 
 (3) ypcat
-   1) 설명: NIS 클라이언트에서 사용하는 명령어로 NIS 서버의 데이타베이스라고 할 수 있는 맵파일
-           의 내용을 확인하는 명령이다.
-   2) 사용법
-     ypcat 맵파일
+: NIS 클라이언트에서 사용하는 명령어로 NIS 서버의 데이타베이스라고 할 수 있는 맵파일  의 내용을 확인하는 명령이다.
+
+- 사용법
+> ypcat 맵파일
       => NIS 서버의 맵파일 정보를 보여준다. 맵파일의 확인은 'ypwhich -m' 명령을 이용한다.
-   3) 사용법
-    ㄱ. [root@linux246 root]# ypcat hosts.byname
+
+- 사용법
+> [root@linux246 root]# ypcat hosts.byname
          => 호스트관련정보를 보여준다.
-    ㄴ. [root@linux246 root]# ypcat passwd.byname
+
+> [root@linux246 root]# ypcat passwd.byname
          => NIS 서버의 사용자관련 정보를 보여준다.
 
 (4) yppasswd
-    1) 설명: NIS 클라이언트에서 NIS 서버에 등록된 사용자의 패스워드를 변경하는 명령이다. 물론
-           변경하려면 NIS 서버의 root 패스워드도 알아야 한다.
-    2) 사용법
-      yppasswd 사용자계정
-    3) 사용예
-      ypasswd testuser
+: NIS 클라이언트에서 NIS 서버에 등록된 사용자의 패스워드를 변경하는 명령이다. 물론        변경하려면 NIS 서버의 root 패스워드도 알아야 한다.
+- 사용법
+> yppasswd 사용자계정
+
+- 사용예
+> ypasswd testuser
 
 (5) ypchsh
-   1) 설명: NIS 클라이언트에서 NIS 서버에 등록된 사용자의 쉘을 변경하는 명령이다.
-   2) 사용법
-     ypchsh 사용자계정
-   3) 사용예
-     ypchsh testuser
+: NIS 클라이언트에서 NIS 서버에 등록된 사용자의 쉘을 변경하는 명령이다.
+- 사용법
+> ypchsh 사용자계정
+ 
+- 사용예
+> ypchsh testuser
             
 (6) ypchfn
-   1) 설명: NIS 클라이언트에서 NIS 서버에 등록된 사용자의 정보를 변경하는 명령이다.
-   2) 사용법
-     ypchfn 사용자계정
-   3) 사용예
-     ypchfn testuser
+: NIS 클라이언트에서 NIS 서버에 등록된 사용자의 정보를 변경하는 명령이다.
+- 사용법
+> ypchfn 사용자계정
+- 사용예
+> ypchfn testuser
 
+***
+##### NFS
+- NFS 서버 exports 설정
+: 파일에 마운트를 허가할 디렉토리와 마운트를 허가할 호스트 목록을 설정
+
+[root@web /]# vi /etc/exports
+
+/home   192.168.59.129(rw,sync)
+: 위의 설정은 NFS 서버의 특정 IP의 호스트 접속을 허용하는 설정
 
             
-        
+- rw : 읽기, 쓰기 가능
+
+- ro : 읽기만 가능
+
+- secure : 클라이언트 마운트 요청시 포트를 1024 이하로 합니다.
+
+- noaccess : 액세스 거부
+
+- root_squach : 클라이언트의 root가 서버의 root권한을 획득하는 것을 막습니다.
+
+- no_root_squash : 클라이언트의 root와 서버의 root를 동일하게 합니다.
+
+- sync : 파일 시스템이 변경되면 즉시 동기화합니다.
+
+- all_squach : root를 제외하고 서버와 클라이언트의 사용자를 동일한 권한으로 설정합니다.
+
+- no_all_squach : root를 제외하고 서버와 클라이언트의 사용자들을 하나의 권한을 가지도록 설정합니다. 
+
+
+ㅁ NFS 관련 명령어
+
+/etc/exports파일을 수정했다면 exportfs -r 명령어로 변경사항을 적용합니다.
+NFS서버는 nfs데몬을 재시작해서 변경사항을 적용하지 않습니다. 
+
+exportfs 명령어는 NFS서버를 다시 시작하지 않고도 공유 목록을 수정가능
+|옵션|내용|
+|---|---|
+|-a|/etc/exports 파일을 읽어 들입니다(NFS 공유 리스트 갱신)|
+|-r|/etc/exports 파일을 다시 읽어 들입니다.|
+|-u |[ip] : / [디렉토리] 입력한 디렉토리를 공유 목록에서 제외 합니다.|
+|-v | 현재의 공유목록을 확인합니다.|
+ 
+
+showmount는 NFS 서버의 마운트 관련 정보를 출력하는 명령입니다. -e 옵션을 사용하면 익스포트된 리스트를 보여줌
+> showmount -e
+
+exportfs 명령어는 NFS 서버에 익스포트 된 디렉터리 정보를 관리해주는 명령어
+-v 옵션으로 내가 설정했던 내용이 잘 들어갔는지 확익가능
+> showmount -v
+
+nfsstat
+: NFS서버 또는 NFS 클라이언트에서 NFS 관련 상태 정보 출력
+
+***
+#### logrotate
+
+-- Logrotate 파일구조 --
+
+  데몬 프로그램 : /usr/sbin/logrotate 
+
+  Logrotate 데몬 설정파일 : /etc/logrotate.conf
+
+  Logrotate를 프로세스 설정파일 : /etc/logrotate.d/
+
+  Logrotate 작업내역 로그 : /etc/cron.daily/logrotate
+<br>
+<br>
+
+ㅁ /etc/logrotate.conf 설정
+
+* rotate [숫자] : log파일이 5개 이상 되면 삭제 ex) rotate 5
+
+* maxage [숫자] : log파일이 30일 이상 되면 삭제 ex) maxage 30
+
+* size : 지정된 용량보다 클 경우 로테이트 실행 ex)　size +100k
+
+* create [권한] [유저] [그룹] : 로테이트 되는 로그파일 권한 지정 ex) create 644 root root
+
+* notifempty : 로그 내용이 없으면 로테이트 하지 않음 
+
+* ifempty : 로그 내용이 없어도 로테이트 진행 
+
+* monthly(월 단위) , weekly(주 단위) , daily(일 단위) 로테이트 진행
+
+* compress : 로테이트 되는 로그파일 gzip 압축
+
+* nocompress : 로테이트 되는 로그파일 gzip 압축 X
+
+* missingok : 로그 파일이 발견되지 않은 경우 에러처리 하지 않음
+
+* dateext : 백업 파일의 이름에 날짜가 들어가도록 
+
+
+<br>
+
+ㅁ vi /etc/logrotate.d/apache
+
+
+> /app/apache/logs/*log{
+> 
+> weekly
+> 
+> rotate 5
+> 
+> compress
+> 
+> missingok
+> 
+> create 644 root root
+> 
+> dateext
+> 
+> }
+
+***
+#### DHCP
+-   DHCP 서버 구성 방법을 알지 못한다면 dhcpd.conf.example 파일을 참고하여 적으면 된다.
+cat /usr/share/doc/dhcp-server/dhcpd.conf.example
+
+vi /etc/dhcp/dhcpd.conf
+
+- domain-name:   네트워크 기본 도메인을 정의한다. 
+
+- domain-name-servers:   IP 주소를 호스트 이름으로 해석하는 데 사용되는 DNS 서버를 입력한다. (최대 3개)
+
+- default-lease-time: DHCP 임대시간을 설정한다. (초)
+
+- max-lease-time:   DHCP 최대 임대시간을 설정한다. (초)
+
+\# default-lease-time과 max-lease-time의 차이점
+:Client가 요청 후 default-lease-time 시간동안 임대를 한 후 요청을 하지 않는다면 default-lease-time 시간만큼 임대를 해주고 다시 새로운 요청을 한다면 갱신된  default-lease-time시간만큼 할당을 해준다.
+
+임대 시간이 max-lease-time이 넘는다면 클라이언트의 지속 요청을 무시하고 서버에 해당 IP주소를 반환하게된다.
+
+
+- subnet 172.16.150.0 netmask 255.255.255.0 {}:   172.16.150.0/24 대역의 네트워크에 DHCP를 설정한다.
+
+- routers:   Gateway 주소를 설정한다.
+
+- subnet-mask:   서브넷 마스크를 설정한다.
+
+- domain-search:   참조할 DNS 서버 주소를 입력한다.
+
+- domain-name-servers:  IP 주소를 호스트 이름으로 해석하는 데 사용되는 DNS 서버를 입력한다. (최대 3개)
+
+- range:   DHCP IP를 임대할 범위를 설정한다.
+
+![image](https://user-images.githubusercontent.com/62640332/139906781-a0555300-6fdc-4cda-8cfb-1fdd0605a16b.png)
