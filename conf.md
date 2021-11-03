@@ -1,3 +1,5 @@
+apache, smaba, mail, xinetd, nis, nfs
+
 ![image](https://user-images.githubusercontent.com/62640332/139581014-597ce0d7-9110-4b20-bb8a-149421eeddb1.png)
 
 
