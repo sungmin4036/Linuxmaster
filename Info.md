@@ -597,19 +597,19 @@ firewall-cmd --permanent --add-service=ftp
 * insmod    
 : 커널에 모듈을 적재하는 명령. 해당 모듈 파일이 존재하는 디렉터리까지 이동, 의존성이 있는 모듈인 경우에는 적재 못함.
 
-[사용법]
+> [사용법]        
 $ insmod 모듈_파일명
 
 * rmmod
 커널에서 모듈을 제거하는 명령.
 
-[사용법]
+> [사용법]       
 $ rmmod 모듈
 
 * modprobe
 리눅스 커널에 모듈을 적재하거나 제거하는 명령. 단일모듈, 의존성이 있는 여러 모듈, 특정 디렉터리의 모든 모듈들을 적재할 수 있음.
 
-[사용법]
+> [사용법]   
 $ modprobe [option] 모듈 [기호=값]
 
 옵션
@@ -630,14 +630,18 @@ $ modprobe [option] 모듈 [기호=값]
 \# depmod는 모듈 간의 의존성을 관리하는 명령어로 위 파일과 맵 파일을 생성한다.
 
 * 커널
-시스템 자원을 소유하고 관리하는 역할
-하드웨어, 메모리, 프로세스 스케줄링을 담당하고 프로그램이 하드웨어 자원을 간접적으로 접근할 수 있도록 해줌.
-'uname -r' 명령으로 커널 버전 확인 가능
+시스템 자원을 소유하고 관리하는 역할           
+하드웨어, 메모리, 프로세스 스케줄링을 담당하고 프로그램이 하드웨어 자원을 간접적으로 접근할 수 있도록 해줌.           
+'uname -r' 명령으로 커널 버전 확인 가능              
+	
 <br>
+	
 * 커널 컴파일
 커널 컴파일은 커널 소스를 다운로드하여 사용하는 시스템에 최적화된 커널을 만드는 과정.
+	
 <br>
-* 커널 컴파일 순서
+	
+ㅁ  커널 컴파일 순서
 
 > 1. 커널 소스파일 압축해제
 > 2. 커널 소스의 설정 값 초기화(make mrproper)
@@ -649,13 +653,13 @@ grub.conf 파일 수정(make install)
 새로운 커널 사용을 위한 시스템 재부팅
 
 
-* Make Cleaning Target
+ㅁ Make Cleaning Target
 
 > - make clean : 생성된 오브젝트 파일을 제거하고 다시 configure할 때 사용
 > - make mrproper : configure 작업을 통해 생성된 오브젝트 파일 뿐만 아니라 config 파일, 다양한 백업 파일 등도 제거. 주로 사용하는 명령어.
 > - make distclean : mrproper 작업과 더불어 편집된 백업 및 패치 파일도 모두 제거
 
-* 커널 컴파일 주요 도구
+ㅁ 커널 컴파일 주요 도구
 
 > - make config : 텍스트 기반 설정 도구. y, m, n으로 설정
 > - make menuconfig : 컬러 메뉴 제공, 커서 이용. 가장 많이 사용.
@@ -691,14 +695,15 @@ grub.conf 파일 수정(make install)
 
 |옵션|설명|
 |---|---|
-|-i|각각의 ㅏㄹ인마다 logger의 프로세스 ID 기록|
+|-i|각각의 라인마다 logger의 프로세스 ID 기록|
 |-s|시스템 로그뿐만 아니라 표준 출력으로도 메세지 출력|
 |-f file|지정한 file에 로그를 출력|
 |-p pri|pri(우선순위)를 메세지와 함께 출력, 기본값은 user.notice|
 |-t tag| tag를 각각의 라인마다 기록|
 
 ***
-#### htpasswd
+#### htpasswd    
+: 아파치 패스워드 걸기
 사용방법
 > htpasswd [ -c ] [ -m ] [ -D ] passwdfile username
 
@@ -738,37 +743,23 @@ passwdfile에 만들거나 수정할 사용자명. username이 이 파일에 없
 
  3) 사용 방법 : ssh [옵션] [주소]
 
- 4) 옵션
-
- -1 : ssh를 프로토콜 버전 1로 시도
-
- -2 : ssh를 프로토콜 버전 2로 시도
-
- -4 : IPv4 주소만 사용
-
- -6 : IPv6 주소만 사용
-
- -F configfile : 사용자 설정 파일(configfile)을 지정
-
- -I(아이) smartcard_device : 사용자 개인 RSA 키를 저장한 디바이스(smartcard_device)를 지정
-
- -i identity_file : RSA나 DSA 인증 파일(identity_file)을 지정
-
- -l login_name : 서버에 로그인할 사용자(login_name)을 지정
-
- -p port : 서버에 접속할 포트를 지정
-
- -q : 메시지를 출력하지 않음
-
- -V : 버전 정보를 출력
-
- -v : 상세한 정보를 출력. 디버깅에 유용
-
- -X : X11 forwarding 기능을 활성화. 이는 서버에 접속하여 서버의 프로그램을 클라이언트의 화면에서 실행할 수  있음
-
- -x : X11 forwarding 기능을 비활성화
-
- -y : 신뢰할만한 X11 forwarding 기능을 활성화
+|옵션|내용|
+|---|---|
+|-1 | ssh를 프로토콜 버전 1로 시도|
+|-2 | ssh를 프로토콜 버전 2로 시도|
+ |-4 | IPv4 주소만 사용|
+| -6 | IPv6 주소만 사용|
+| -F configfile| 사용자 설정 파일(configfile)을 지정|
+| -I(아이) smartcard_device | 사용자 개인 RSA 키를 저장한 디바이스(smartcard_device)를 지정|
+| -i identity_file | RSA나 DSA 인증 파일(identity_file)을 지정|
+| -l login_name | 서버에 로그인할 사용자(login_name)을 지정|
+| -p port | 서버에 접속할 포트를 지정|
+| -q | 메시지를 출력하지 않음|
+| -V | 버전 정보를 출력|
+| -v | 상세한 정보를 출력. 디버깅에 유용|
+| -X | X11 forwarding 기능을 활성화. 이는 서버에 접속하여 서버의 프로그램을 클라이언트의 화면에서 실행할 수  있음|
+| -x | X11 forwarding 기능을 비활성화|
+| -y | 신뢰할만한 X11 forwarding 기능을 활성화|
 
 ***
 #### IPTABLE
@@ -992,35 +983,38 @@ iptables-extensions man page 에서는 local network 를 벗어나는 packet 에
 
 ##### 커맨드와 옵션
 
-Rule 관련
+ㅁ Rule 관련
 
--A (–-append) : 새로운 규칙을 추가
--C (–check) : 패킷을 테스트
--D (–delete) : 규칙을 삭제
--F (–flush) : chain 으로 부터 규칙을 모두 삭제
--I (–Insert) : 새로운 규칙을 삽입
--L (–list) : 규칙을 출력
--N (–new) : 새로운 chain을 만듬
--P (–policy) : 기본정책을 변경
--R (–replace) : 새로운 규칙으로 교체
--X (–delete-chain) : chain 을 삭제
--Z (–zero) : 모든 chain의 패킷과 바이트 카운터 값을 0으로 만듬
+|옵션|내용|
+|---|---|	
+|-A (–-append) | 새로운 규칙을 추가|
+|-C (–check) | 패킷을 테스트|
+|-D (–delete) | 규칙을 삭제|
+|-F (–flush) | chain 으로 부터 규칙을 모두 삭제|
+|-I (–Insert) | 새로운 규칙을 삽입|
+|-L (–list) | 규칙을 출력|
+|-N (–new) | 새로운 chain을 만듬|
+|-P (–policy) | 기본정책을 변경|
+|-R (–replace) | 새로운 규칙으로 교체|
+|-X (–delete-chain) | chain 을 삭제|
+|-Z (–zero) | 모든 chain의 패킷과 바이트 카운터 값을 0으로 만듬|
 
 
-option 관련
-
-iptables에서 패킷을 처리할 때 만족해야 하는 조건을 가리킵니다.
+ㅁ option 관련
+: iptables에서 패킷을 처리할 때 만족해야 하는 조건을 가리킵니다.    
 즉, 이 조건을 만족시키는 패킷들만 규칙을 적용합니다.
 
--s (–source) : 출발지 IP주소나 네트워크와의 매칭
--d (–destination) : 목적지 IP주소나 네트워크와의 매칭
--p (–protocol) : 특정 프로토콜과의 매칭
--i (–in-interface) : 입력 인터페이스
--o (–out-interface) : 출력 인터페이스
-–state : 연결상태와의 매칭
-–comment : 커널 메모리 내의 규칙과 연계되는 최대 256바이트 주석
--y (–syn) : SYN 패킷을 허용하지 않음
--f(–fragment) : 두번째 이후의 조가게 대해서 규칙을 명시한다.
--t (–table) : 처리될 테이블
--j (–jump) : 규칙에 맞는 패킷을 어떻게 처리할것인가를 명시한다.
--m (–match) : 특정 모듈과의 매치
+|옵션|내용|
+|---|---|
+|-s (–source) | 출발지 IP주소나 네트워크와의 매칭|
+|-d (–destination) | 목적지 IP주소나 네트워크와의 매칭|
+|-p (–protocol) | 특정 프로토콜과의 매칭|
+|-i (–in-interface) | 입력 인터페이스|
+|-o (–out-interface) | 출력 인터페이스|
+|–state | 연결상태와의 매칭|
+|–comment | 커널 메모리 내의 규칙과 연계되는 최대 256바이트 주석|
+|-y (–syn) | SYN 패킷을 허용하지 않음|
+|-f(–fragment) | 두번째 이후의 조가게 대해서 규칙을 명시한다.|
+|-t (–table) | 처리될 테이블|
+|-j (–jump) | 규칙에 맞는 패킷을 어떻게 처리할것인가를 명시한다.|
+|-m (–match) | 특정 모듈과의 매치|
