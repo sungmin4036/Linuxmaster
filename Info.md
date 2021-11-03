@@ -148,34 +148,34 @@ rpm <옵션> <패키지>
 > 설정파일의 구성: facility.priority; facility.priority;    action
 
 
-- Facility
-> ① cron: cron, at과 같은 스케쥴링
-② auth, security: login과 같은 인증
-③ authpriv: ssh와 같이 인증이 필요한
-④ daemon: telnet, ftp 등과 같은 데몬
-⑤ kern: 커널
-⑥ lpr: 프린트
-⑦ mail: 메일
-⑧ mark: syslogd에 의해 만들어지는 날짜 유형
-⑨ user: 사용자 프로세스
+- Facility                         
+> ① cron: cron, at과 같은 스케쥴링            
+② auth, security: login과 같은 인증                 
+③ authpriv: ssh와 같이 인증이 필요한                                  
+④ daemon: telnet, ftp 등과 같은 데몬               
+⑤ kern: 커널             
+⑥ lpr: 프린트              
+⑦ mail: 메일                  
+⑧ mark: syslogd에 의해 만들어지는 날짜 유형              
+⑨ user: 사용자 프로세스                   
 
-- Priority
-> ① none: 지정한 facility를 제외
-② debug: 프로그램 디버깅
-③ info: 통계, 기본 정보 메시지
-④ notice: 특별히 주의를 요하나, 에러는 아님
-⑤ warning, warn: 주의가 필요한 경고 메시지
-⑥ error, err: 에러 발생
-⑦ crit: 크게 급하지는 않지만 시스템에 문제가 생김
-⑧ alert: 즉각 조치 필요
-⑨ emerg, panic: 모든 사용자들에게 전달해야 할 위험한 상황
+- Priority                         
+> ① none: 지정한 facility를 제외              
+② debug: 프로그램 디버깅                 
+③ info: 통계, 기본 정보 메시지           
+④ notice: 특별히 주의를 요하나, 에러는 아님           
+⑤ warning, warn: 주의가 필요한 경고 메시지            
+⑥ error, err: 에러 발생               
+⑦ crit: 크게 급하지는 않지만 시스템에 문제가 생김               
+⑧ alert: 즉각 조치 필요              
+⑨ emerg, panic: 모든 사용자들에게 전달해야 할 위험한 상황                           
 
-- Action
->① file: 지정한 파일에 로그 기록
-② @host: 지정한 호스트로 메시지 전달
-③ user: 지정한 사용자가 로그인 한 경우, 해당 사용자의 터미널로 전달
-④ *: 현재 로그인 되어 있는 모든 사용자의 화면으로 전달
-⑤ 콘솔 또는 터미널: 지정한 터미널로 메시지 전달
+- Action                   
+>① file: 지정한 파일에 로그 기록            
+② @host: 지정한 호스트로 메시지 전달               
+③ user: 지정한 사용자가 로그인 한 경우, 해당 사용자의 터미널로 전달                     
+④ *: 현재 로그인 되어 있는 모든 사용자의 화면으로 전달        
+⑤ 콘솔 또는 터미널: 지정한 터미널로 메시지 전달                          
 
 예시
 
