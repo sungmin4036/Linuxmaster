@@ -92,8 +92,8 @@
 
 - MX 레코드는 Mail Exchanger의 약어로 해당 도메인에 대한 메일서버를 지정하는 레코드이다. 일반적으로 메일서버를 여러개 사용할 때 MX레코드 다음에 우선순위 번호를 지정하여 메일을 수신할 수 있다.  
  
-> -   IN              MX 10          mail.userdomainname.com.
-> -   IN              MX 20          mail2.userdomainname.com.
+>  IN              MX 10          mail.userdomainname.com.
+>  IN              MX 20          mail2.userdomainname.com.
 
 위와 같이 설정한다면 메일 수신시 우선순위가 빠른 10번의 mail.userdomainname.com.에서 메일을 수신하는데 만약 10번의 메일서버에 장애가 발생하면 20번의 mail2.userdomainname.com. 메일서버로 메일을 수신하도록 한다는 의미임.
  
@@ -109,17 +109,17 @@
 
  
 
-> -   ns           IN            A           211.108.52.60
-> - www        IN            A           211.108.52.60
+>  ns           IN            A           211.108.52.60
+>  www        IN            A           211.108.52.60
 
  
 
-CNAME 레코드는 별칭을 설정하여 사용하는 레코드이다. CNAME 레코드를 사용하고 A 레코드로 정의한 도메인을 적어주면 A 레코드의 도메인 IP를 별칭으로 사용함으로써 mail도메인에 대해서는 www의 IP를 사용하도록 지정하는 방법이다.
+- CNAME 레코드는 별칭을 설정하여 사용하는 레코드이다.    
+- CNAME 레코드를 사용하고 A 레코드로 정의한 도메인을 적어주면 A 레코드의 도메인 IP를 별칭으로 사용함으로써 mail도메인에 대해서는 www의 IP를 사용하도록 지정하는 방법이다.
 
-> - mail          IN         CNAME            www
-> - ftp           IN         CNAME            @
+>  mail          IN         CNAME            www
+>  ftp           IN         CNAME            @
 
- 
 
 위처럼 도메인 IP번호를 별칭을 이용하여 @로 지정하면 /etc/named.rfc1912zones파일에서 정의한 ORIGIN 도메인명을 받아와서 IP를 설정하기 때문에 211.108.52.60을 의미하게 된다.
 
@@ -127,6 +127,7 @@ CNAME 레코드는 별칭을 설정하여 사용하는 레코드이다. CNAME �
 
 
 ㅁ 레코드 종류
+
 |타입|의미|
 |---|---|
 |NS|도메인 메임서버 정보|
@@ -145,10 +146,11 @@ CNAME 레코드는 별칭을 설정하여 사용하는 레코드이다. CNAME �
 <br>
 <br>
 <br>
+
 - Zone 설정
 : 도메인 -> IP 바꾸어주는것
 
->@        IN    SOA     ns.ihd.or.kr.   kait.ihd.or.kr.  (
+> @        IN    SOA     ns.ihd.or.kr.   kait.ihd.or.kr.  (
 > 
 >                     20010504            ; serial
 > 
@@ -168,7 +170,7 @@ CNAME 레코드는 별칭을 설정하여 사용하는 레코드이다. CNAME �
 > 
 >           www   IN    A    192.168.123.254
 > 
->            www1    IN   CNAME    www
+>           www1    IN   CNAME    www
 
 도메인은 ihd.or.kr 이고, 관리자 메일은 kait@ihd.or.kr
 ihd.or.kr 도메인으로 메일을 받을수 있도록 설정
@@ -194,7 +196,7 @@ www 도메인을 사용하는 호스트의 IP 주소를 192.168.5.13
 > (15    IN)  PTR ihd.or.kr.   << 15 IN 은 생략 가능
 
 IP 주소는 10.0.2.15 이고 설정하는 도메인 ihd.or.kr   
-관리자 메일 주소는 kait@ihd.or.kr로 설정한다.
+관리자 메일 주소는 kait@ihd.or.kr로 설정한다.     
 네임 서버는 ns.ihd.or.kr을 사용
 10.0.2.15 인 IP 주소를 조회하면 ihd.or.kr가 나타나도록 설정.
 
@@ -202,6 +204,7 @@ IP 주소는 10.0.2.15 이고 설정하는 도메인 ihd.or.kr
 #### 삼바
 
 ㅁ smb(파일 공유 삼바 서비스)
+
  1) 경로 : /etc/init.d/smb
 
  2) 요약 : 윈도우와 공유 디렉터리 설정을 위한 데몬
@@ -213,7 +216,7 @@ IP 주소는 10.0.2.15 이고 설정하는 도메인 ihd.or.kr
 
 ![image](https://user-images.githubusercontent.com/62640332/139590751-3185e530-cefb-4239-a71f-2fe4d63f6642.png)
 
-ㅇ1. global 설정 지시어
+ㅇ global 설정 지시어
 
 |지시어|	설명|
 |---|---|
@@ -227,31 +230,27 @@ IP 주소는 10.0.2.15 이고 설정하는 도메인 ihd.or.kr
 |max log size|	로그 파일 크기를 제한|
 |security	|user, share, server의 시큐리티 등급을 지정|
 |encrypt passwords|	패스워드를 암호화|
-|smb passwd file	|삼바 ㅍㅐ스워드 파일의 위치를 지정|
+|smb passwd file	|삼바 패스워드 파일의 위치를 지정|
 |socket options	|지정된  옵션을 사용. 설정된 소켓 옵션이 최적의 성능 향상을 가져옴|
  
 
- ㅇ2. homes
-
-사용자 홈 디렉터리에 대한 공유 설정입니다. 위 파일에 설정 기본값을 사용하면 됩니다.
-
- 
-
- ㅇ3. printers
-
-CUPS 프린트 시스템이라면 각 프린트의 정의를 새로 설정해 줄 필요가 없습니다. 다만 public = yes라고 지정하면 게스트 사용자(여기서는 pcguest)도 프린트를 사용할 수 있습니다.
+ ㅇ homes
+: 사용자 홈 디렉터리에 대한 공유 설정입니다. 위 파일에 설정 기본값을 사용하면 됩니다.
 
  
 
- ㅇ4. public
-
-위 설정에서는 /home/samba 디렉터리를 윈도우와 공용으로 사용하는 디렉터리로 지정했습니다.
+ ㅇ printers
+: CUPS 프린트 시스템이라면 각 프린트의 정의를 새로 설정해 줄 필요가 없습니다. 다만 public = yes라고 지정하면 게스트 사용자(여기서는 pcguest)도 프린트를 사용할 수 있습니다.
 
  
 
- ㅇ5. movie
+ ㅇ public
+: 위 설정에서는 /home/samba 디렉터리를 윈도우와 공용으로 사용하는 디렉터리로 지정했습니다.
 
-위 설정에서 /home/movie 디렉터리를 chan 사용자에게만 접근할 수 있게 했습니다. 모든 설정을 완료한 후 삼바 서비스 데몬을 실행합니다.
+ 
+
+ ㅇ movie
+: 위 설정에서 /home/movie 디렉터리를 chan 사용자에게만 접근할 수 있게 했습니다. 모든 설정을 완료한 후 삼바 서비스 데몬을 실행합니다.
 
 
 ***
@@ -304,7 +303,7 @@ CUPS 프린트 시스템이라면 각 프린트의 정의를 새로 설정해 �
 
 <공통 삼바 옵션>
 
- -d, --debuglevel=DEBUGLEVEL : ㄷ디버깅 레벨(DEBUGLEVEL)을 지정
+ -d, --debuglevel=DEBUGLEVEL : 디버깅 레벨(DEBUGLEVEL)을 지정
 
  -s, --configfile=CONFIGFILE : 설정파일(CONFIGFILE)을 지정
 
@@ -533,18 +532,18 @@ squid.conf
 >http_access다음에 all 또는 deny를 지정하고 acl리스트 중 하나를 지정해 사용한다.
 
 
-> acl user src 192.168.3.69
-> acl all src 0.0.0.0/0.0.0.0
-> http_access allow ser
-> http_access deny all
+> acl user src 192.168.3.69            
+> acl all src 0.0.0.0/0.0.0.0               
+> http_access allow ser            
+> http_access deny all                   
 > 
->192.168.3.69 네트워크주소를 user 만 프록시서버 접속을 허용하고, 다른 네트워크에 대해서는
->속을 거부한다.
+>192.168.3.69 네트워크주소를 user 만 프록시서버 접속을 허용하고, 다른 네트워크에 대해서는 접속을 거부한다.
 
->acl members src 192.168.3.0/255.255.255.0
->acl all src 0.0.0.0/0.0.0.0
->http_access allow members
->http_access deny all
+<br>           
+>acl members src 192.168.3.0/255.255.255.0           
+>acl all src 0.0.0.0/0.0.0.0             
+>http_access allow members              
+>http_access deny all                     
 > 
 > 192.168.3.0 네트워크주소를 members 범위로 규정하여 http_access 에서 프록시서버 접속을 >허용하고, 다른 네트워크에 대해서는 접속을 거부한다.
 
@@ -570,103 +569,90 @@ xinetd.conf 파일에는 default 설정 값이 포함되어있습니다.
  default section will be inherited by all service configurations
  unless explicitly overridden in the service configuration. See
 xinetd.conf in the man pages for a more detailed explanation of
-defaults
-{
-# The next two items are intended to be a quick access place to
-# temporarily enable or disable services.
-#
-#       enabled         =
-#       disabled        =
 
-# Define general logging characteristics.
-        log_type        = SYSLOG daemon info
-        log_on_failure  = HOST
-        log_on_success  = PID HOST DURATION EXIT
-
-# Define access restriction defaults
-#
-#       no_access       =
-#       only_from       =
-#       max_load        = 0
-        cps             = 50 10
-        instances       = 50
-        per_source      = 10
-
-# Address and networking defaults
-#
+> defaults        
+> {         
+> \# The next two items are intended to be a quick access place to                             
+> \# temporarily enable or disable services.                
+> \#              
+> \#       enabled         =                    
+> \#       disabled        =                             
+>                  
+> \# Define general logging characteristics.             
+>         log_type        = SYSLOG daemon info                     
+>         log_on_failure  = HOST                
+>         log_on_success  = PID HOST DURATION EXIT               
+>                  
+> \# Define access restriction defaults                         
+> \#                           
+> \#       no_access       =                                    
+> \#       only_from       =                   
+> \#       max_load        = 0                    
+>         cps             = 50 10             
+>         instances       = 50                    
+>         per_source      = 10                                   
+>                 
+> \# Address and networking defaults            
+> \#               
+                        
+            
 3-1  /etc/xinetd.conf 파일
  
-
-1. log_type = SYSLOG | FILE
-
 - 로그파일을 rsyslog 등 시스템 로그에서 관리되도록 위임하거나, 별도의 파일로 선택할 수 있습니다.
+> log_type = SYSLOG | FILE
+
+- 접속에 실패했을 때 기록될 값을 정합니다.           
+ > log_on_failure = HOST | USERID | ATTEMPT
+
 
  
-
-2. log_on_failure = HOST | USERID | ATTEMPT
-
-- 접속에 실패했을 때 기록될 값을 정합니다.
-
- 
-
-3. log_on_success = PID | HOST | USERID | EXIT | DURATION | TRAFFIC
-
 - 접속에 성공했을 때 기록될 값입니다.
+> log_on_success = PID | HOST | USERID | EXIT | DURATION | TRAFFIC
 
- 
+-  초당 요청수만큼을 초과할 경우 제한시간에 설정된 초만큼 접속을 중단시킵니다.            
+> cps = [초당 요청수] [제한시간]
 
-4. cps = [초당 요청수] [제한시간]
+            
+- 동시에 서비스할 수 있는 서버의 최대 서버 수를 지정합니다.            
+> instances = 최대 서버수
 
-- 초당 요청수만큼을 초과할 경우 제한시간에 설정된 초만큼 접속을 중단시킵니다.
-
- 
-
-5. instances = 최대 서버수
-
-- 동시에 서비스할 수 있는 서버의 최대 서버 수를 지정합니다.
-
- 
-
-6. per_source = 최대 접속수
 
 - 같은 IP에서 접속할 수 있는 최대 서비스 수입니다.
+> per_source = 최대 접속수
+
 
  
+- no_access = 접속 불가능한 호스트
+> only_form = 접속 가능한 호스트
 
-7. only_form = 접속 가능한 호스트
-
-no_access = 접속 불가능한 호스트
 
 - only_form과 no_access가 중복되면 차단됩니다.
+> enabled = 사용 가능한 서비스 목록
+> disabled = 사용 불가능한 서비스 목록
 
- 
-
-8. enabled = 사용 가능한 서비스 목록
-
-disabled = 사용 불가능한 서비스 목록
-
-- enabled과 disabled가 중복되면 차단됩니다.
+\# enabled과 disabled가 중복되면 차단됩니다.
 
  
 
 3-2  /etc/xinetd.d 
+            
 cat /etc/xinetd/rsync 파일
-[root@localhost xinetd.d]# cat rsync
-> \# default: off
-> \# description: The rsync server is a good addition to an ftp server, as it \
-> \# allows crc checksumming etc.
-> service rsync
-> {
-> disable = yes
-> flags = IPv6
-> socket_type     = stream
-> wait            = no
-> user            = root
-> server          = /usr/bin/rsync
-> server_args     = --daemon
-> log_on_failure  += USERID
-> }
-> [root@localhost xinetd.d]\# 
+> [root@localhost xinetd.d]# cat rsync        
+> \# default: off                    
+> \# description: The rsync server is a good addition to an ftp server, as it                                     
+> \# allows crc checksumming etc.                
+> service rsync                
+> {                             
+> disable = yes            
+> flags = IPv6                                
+> socket_type     = stream               
+> wait            = no                
+> user            = root                        
+> server          = /usr/bin/rsync                         
+> server_args     = --daemon             
+> log_on_failure  += USERID                        
+> }              
+> [root@localhost xinetd.d]\#                             
  
 
 디렉터리 하위에 서비스 명으로 된 설정 파일을 만들어 서비스(ssh, ftp 등등) 별로 설정할 수 있습니다. 
@@ -691,70 +677,71 @@ NFS는 사용자들의 home디렉토리들이 어느 시스템에서나 동일�
 NIS는 passwd나 group등의 네트워크 정보 파일들을 하나의 서버에서 관리하도록 하여 나머지 시스템에서 
 서버에서 제공하는 새로운 정보를 받을 수 있도록 하는 것이다. 
 
-ㅁ NIX 관련 폴더
-ypbind : 클라이언트 프로그램           
-yp-tools : NIS 명령 패키지          
+ㅁ NIS 관련 폴더     
+ypbind : 클라이언트 프로그램             
+yp-tools : NIS 명령 패키지           
 ypserv : 서버 프로그램               
             
 ㅁ NIS 관련 명령어
             
-(1) nisdomainname
-   1) 설명: NIS 도메인이름을 보여주거나 지정하는 명령이다.
-   2) 사용법
-     nisdomainname [NIS 도메인이름]
-   3) 사용예
-    ㄱ. [root@linux245 root]# nisdomainname
-        test.co.kr
-         => 현재 설정된 NIS 도메인이름을 보여준다.
-    ㄴ. [root@linux245 root]# nisdomainname test.co.kr
-         => NIS 도메인을 test.co.kr로 지정한다.
-
-            (2) ypwhich
-   1) 설명: NIS 클라이언트에서 사용하는 명령어로 NIS 서버의 이름과 관련 맵파일을 보여준다.
-   2) 사용법
-     ypwhich [option]
-   3) option
-     -m : NIS 서버관련 맵파일을 보여준다.
-   4) 사용예
-    ㄱ. [root@linux246 root]# ypwhich
-        nis.test.co.kr
-         => NIS서버의 보여준다.
-    ㄴ. [root@linux246 root]# ypwhich -m
-         => NIS 서버관련 맵파일을 보여준다.
-
-(3) ypcat
-   1) 설명: NIS 클라이언트에서 사용하는 명령어로 NIS 서버의 데이타베이스라고 할 수 있는 맵파일
-           의 내용을 확인하는 명령이다.
-   2) 사용법
-     ypcat 맵파일
-      => NIS 서버의 맵파일 정보를 보여준다. 맵파일의 확인은 'ypwhich -m' 명령을 이용한다.
-   3) 사용법
-    ㄱ. [root@linux246 root]# ypcat hosts.byname
-         => 호스트관련정보를 보여준다.
-    ㄴ. [root@linux246 root]# ypcat passwd.byname
+(1) nisdomainname                
+   1) 설명: NIS 도메인이름을 보여주거나 지정하는 명령이다.         
+   2) 사용법                 
+    > nisdomainname [NIS 도메인이름]              
+   3) 사용예                
+    ㄱ. [root@linux245 root]# nisdomainname                    
+        test.co.kr              
+         => 현재 설정된 NIS 도메인이름을 보여준다.               
+    ㄴ. [root@linux245 root]# nisdomainname test.co.kr                  
+         => NIS 도메인을 test.co.kr로 지정한다.             
+         
+            (2) ypwhich                   
+   1) 설명: NIS 클라이언트에서 사용하는 명령어로 NIS 서버의 이름과 관련 맵파일을 보여준다.                             
+   2) 사용법                   
+    > ypwhich [option]     
+   3) option              
+     -m : NIS 서버관련 맵파일을 보여준다.             
+   4) 사용예              
+    > [root@linux246 root]# ypwhich          
+        nis.test.co.kr          
+         => NIS서버의 보여준다.           
+                         
+    > [root@linux246 root]# ypwhich -m              
+         => NIS 서버관련 맵파일을 보여준다.              
+                                
+(3) ypcat                 
+   1) 설명: NIS 클라이언트에서 사용하는 명령어로 NIS 서버의 데이타베이스라고 할 수 있는 맵파일의 내용을 확인하는 명령이다.         
+   2) 사용법        
+     > ypcat 맵파일        
+      => NIS 서버의 맵파일 정보를 보여준다. 맵파일의 확인은 'ypwhich -m' 명령을 이용한다.         
+   3) 사용법          
+    > [root@linux246 root]# ypcat hosts.byname 
+         => 호스트관련정보를 보여준다.   
+            
+    > [root@linux246 root]# ypcat passwd.byname     
          => NIS 서버의 사용자관련 정보를 보여준다.
 
 (4) yppasswd
     1) 설명: NIS 클라이언트에서 NIS 서버에 등록된 사용자의 패스워드를 변경하는 명령이다. 물론
-           변경하려면 NIS 서버의 root 패스워드도 알아야 한다.
-    2) 사용법
-      yppasswd 사용자계정
-    3) 사용예
-      ypasswd testuser
+           변경하려면 NIS 서버의 root 패스워드도 알아야 한다.            
+    2) 사용법            
+      > yppasswd 사용자계정       
+    3) 사용예         
+      > ypasswd testuser      
 
-(5) ypchsh
-   1) 설명: NIS 클라이언트에서 NIS 서버에 등록된 사용자의 쉘을 변경하는 명령이다.
-   2) 사용법
-     ypchsh 사용자계정
-   3) 사용예
-     ypchsh testuser
+(5) ypchsh         
+   1) 설명: NIS 클라이언트에서 NIS 서버에 등록된 사용자의 쉘을 변경하는 명령이다.            
+   2) 사용법         
+     > ypchsh 사용자계정       
+   3) 사용예          
+     > ypchsh testuser
             
-(6) ypchfn
-   1) 설명: NIS 클라이언트에서 NIS 서버에 등록된 사용자의 정보를 변경하는 명령이다.
+(6) ypchfn              
+   1) 설명: NIS 클라이언트에서 NIS 서버에 등록된 사용자의 정보를 변경하는 명령이다.               
    2) 사용법
-     ypchfn 사용자계정
-   3) 사용예
-     ypchfn testuser
+     > ypchfn 사용자계정        
+   3) 사용예          
+     > ypchfn testuser
 
 
             
