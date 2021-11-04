@@ -285,7 +285,7 @@ nmap -sT 192.168.100.128
 * IPv4 또는 IPv6 포트만 표시
 > lsof -i 4
 
-* 특정 사용자 제외, 사용자 지정 옵션인 -u 에 ^를 추가하면 특정 사용자는 제외할 수 있다
+* 특정 사용자 제외, 사용자 지정 옵션인 -u 에 ^를 추가하면 특정 사용자는 제외할 수 있다       
 > lsof -u^lesstif -u ^root
 
 * 열린 모든 네트워크 포트 표시
@@ -296,7 +296,7 @@ nmap -sT 192.168.100.128
 > UDP 만 lsof -i UDP
 
 
-* 특정 프로세스가 오픈한 파일 표시, -p(소문자) 옵션뒤에 PID 를  주면 된다.
+* 특정 프로세스가 오픈한 파일 표시, -p(소문자) 옵션뒤에 PID 를  주면 된다.             
 > lsof -p 123
 
 
@@ -317,59 +317,60 @@ nmap -sT 192.168.100.128
 | -v | 과정을 출력한다.|
 
 사용방법
->]# find /home | cpio -ocv > home.cpio
-/home 를 home.cpio 파일로 백업한다.
+>]# find /home | cpio -ocv > home.cpio               
+/home 를 home.cpio 파일로 백업한다.                     
 
->]# cpio -icdv < home.cpio
-home.spio의 현재 내용을 디렉터리에 복원한다.
+>]# cpio -icdv < home.cpio                       
+home.spio의 현재 내용을 디렉터리에 복원한다.                 
 
-- dump
-: dump에는 0~9 단계의 레벨을 가지고 있는데, 0단계는 전체백업을 의미하며   
-1 ~ 9단계는 부분백업시에 사용하며, 작업정보를 따로 파일에 기록
+- dump                 
+: dump에는 0~9 단계의 레벨을 가지고 있는데, 0단계는 전체백업을 의미하며                
+1 ~ 9단계는 부분백업시에 사용하며, 작업정보를 따로 파일에 기록                 
 
-파일시스템의 설정정보가 들어있는 /etc/fstab을 이용해서 dump 백업이 이루어지며
-데이터를 복원할 때는 restore 명령을 사용한다.
+파일시스템의 설정정보가 들어있는 /etc/fstab을 이용해서 dump 백업이 이루어지며                              
+데이터를 복원할 때는 restore 명령을 사용한다.             
 
-dump [파일명] [백업대상]
-> -0 ~ -9 : 레벨을 지정한다.
--f : 백업할 매체나 파일명을 지정한다.
--u : 작업 후 /etc/dumpdates 파일에 관련 정보를 기록한다.
+dump [파일명] [백업대상]            
+> -0 ~ -9 : 레벨을 지정한다.            
+-f : 백업할 매체나 파일명을 지정한다.                        
+-u : 작업 후 /etc/dumpdates 파일에 관련 정보를 기록한다.                
+           
+사용방법                                 
+> ]# dump -0u -f test.dump /dev/sdb1                    
+/dev/sdb1 를 test.dump 에 전체백업 후 작업정보를 dumpdates파일에 기록한다.                   
 
-사용방법
-> ]# dump -0u -f test.dump /dev/sdb1     
-/dev/sdb1 를 test.dump 에 전체백업 후 작업정보를 dumpdates파일에 기록한다.
+                         
+> ]# dump -5u -f 1111.dump /home                        
+/home 디렉터리를 1111.dump 이름으로 5레벨로 백업 후 작업정보를 dumpdates 파일에 기록한다.            
 
- 
-> ]# dump -5u -f 1111.dump /home         
-/home 디렉터리를 1111.dump 이름으로 5레벨로 백업 후 작업정보를 dumpdates 파일에 기록한다.
-
-- restore       
-
+- restore                                
+                     
 > restore [백업 파일명]
 |옵션|내용|
 |---|---|
-|-i | 대화식으로 복구할 파일을 선택 후 복원|
-|-f | 백업할 매체나 파일명 지정|
-|-r | 전체 복원시에 사용|
+|-i | 대화식으로 복구할 파일을 선택 후 복원|                
+|-f | 백업할 매체나 파일명 지정|                               
+|-r | 전체 복원시에 사용|                    
 
-사용방법
+사용방법                      
 
-> restore -rf test.dump      
-test.dump 파일에 저장된 데이터를 전체 복원한다.
+> restore -rf test.dump                       
+test.dump 파일에 저장된 데이터를 전체 복원한다.                  
 
 - tar
-  
+   
 - dd(Disk & Dump)
-
-> *  사용될 수 있는 블럭 크지 지정의 문자들은 다음과 같다:              
-> b=512, c=1, k=1024, w=2, xm=number m            
-> * --help: 도움말을 보여주고 마친다.                   
-> * --version:  버전 정보를 보여주고 마친다.              
-> * if=file: 표준 입력 대신에 지정한 file을 입력 대상으로 한다.            
-> * of=file: 표준 출력 대신에 지정한 file을 출력 대상으로 한다.  conv=notrunc  옵션을 사용하지 않는 한은, seek= 바이트 크기에 따라 ( seek= 크기가 0아닌 한) 지정한 크기에 따라 출력 파일을 자른다.
-> * ibs=bytes: 한번에 bytes 바이트씩 읽는다.   
-> * obs=bytes: 한번에 bytes 바이트씩 쓴다.                    
-> * bs=bytes:  한번에 bytes 바이트씩 읽고 쓴다.  ibs, obs 값 무시.                             
+                                                   
+> *  사용될 수 있는 블럭 크지 지정의 문자들은 다음과 같다:                                  
+> b=512, c=1, k=1024, w=2, xm=number m                                    
+> * --help: 도움말을 보여주고 마친다.                                        
+> * --version:  버전 정보를 보여주고 마친다.                                
+> * if=file: 표준 입력 대신에 지정한 file을 입력 대상으로 한다.             
+> * of=file: 표준 출력 대신에 지정한 file을 출력 대상으로 한다.           
+conv=notrunc  옵션을 사용하지 않는 한은, seek= 바이트 크기에 따라 ( seek= 크기가 0아닌 한) 지정한 크기에 따라 출력 파일을 자른다.
+> * ibs=bytes: 한번에 bytes 바이트씩 읽는다.                                           
+> * obs=bytes: 한번에 bytes 바이트씩 쓴다.                                               
+> * bs=bytes:  한번에 bytes 바이트씩 읽고 쓴다.  ibs, obs 값 무시.                                                     
 > * cbs=bytes: 한번에 bytes 바이트씩 변환한다.
 > * skip=blocks: 입력 시작에서 blocks 단위 만큼 ibs 크기를 건너띈다.(가령 skip=5, ibs=10 이면, 처음 50바이트를건너띄어 작업을 계속한다.)
 > * seek=blocks: 출력 시작에서 blocks 단위 만큼 ibs 크기를 건너띈다.
@@ -391,10 +392,10 @@ test.dump 파일에 저장된 데이터를 전체 복원한다.
 
 
 사용방법
-> a.txt 파일 안에 있는 문자를 전부 소문자로 변환해서 b.txt파일로 저장한다.          
+> a.txt 파일 안에 있는 문자를 전부 소문자로 변환해서 b.txt파일로 저장한다.                     
 dd if=a.txt of=b.txt conv=lcase
 
->/dev/sdb1의 내용을 그대로 /dev/sdc1으로 백업 진행하는데, 블록 크기는 1KB로 지정한다.           
+>/dev/sdb1의 내용을 그대로 /dev/sdc1으로 백업 진행하는데, 블록 크기는 1KB로 지정한다.            
 dd if=/dev/sdb1 of=/dev/sdc1 bs=1k
 
 
