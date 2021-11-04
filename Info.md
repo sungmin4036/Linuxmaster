@@ -1,16 +1,16 @@
 #### RAID 설정: mdadm
-
-- RAID 어레이 상태를 확인하기
-> [root@localhost ~]# more /proc/mdstat
-Personalities : [raid1]
-md0 : active raid1 sda[0] sdb[0]
-40692224 blocks 256k chunks
-
-- RAID 설정 파일 생성 하기
-> [root@AP1 /]# more /etc/mdadm.conf 
-DEVICE /dev/sdb /dev/sdc
-ARRAY /dev/md0 devices=/dev/sdb,/dev/sdc
-
+          
+- RAID 어레이 상태를 확인하기                          
+> [root@localhost ~]# more /proc/mdstat       
+Personalities : [raid1]              
+md0 : active raid1 sda[0] sdb[0]                     
+40692224 blocks 256k chunks                          
+              
+- RAID 설정 파일 생성 하기                    
+> [root@AP1 /]# more /etc/mdadm.conf              
+DEVICE /dev/sdb /dev/sdc              
+ARRAY /dev/md0 devices=/dev/sdb,/dev/sdc               
+                  
 - RAID 구성 명령어 실행
 > [root@AP1 etc]# mdadm -C /dev/md0 --level=raid1 --raid-devices=2 /dev/sdb /dev/sdc
 
