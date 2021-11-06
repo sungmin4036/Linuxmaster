@@ -47,10 +47,109 @@ ARRAY /dev/md0 devices=/dev/sdb,/dev/sdc
 |-f|패스워드의 만기일을 날짜 수로 지정한다.|useradd -f 3 user10|
 |-e|계정의 만기일을 YYYY-MM-DD 형식으로 지정한다.|useradd -e '2020-12-31' user9|
 |-u|사용자 추가 시에 UID 값을 지정한다.|useradd -u 1004 user7|
+***
+#### 파일 시스템 생성(mke2fs, mkfs)
+
 
 ***
 
 #### 파일 시스템 검사
+
+- mkfs명령어는 파일시스템생성 작업을 간단히 할수 있는 명령어
+
+mkfs란 명령어또한 파일시스템 생성을 위한 명령어이다. mke2fs명령어보다 간단히 사용할수 있으므로 알아두면 좋다.
+
+> mkfs -t ext3 /dev/sdc1 이란 형식으로 파일시스템을 생성할수도 있지만,
+
+> mkfs.ext3 /dev/sdc1 이렇게도 사용이 가능하다.
+
+```mkfs
+[root@os1 ~]# ls -l /sbin | grep mkfs
+
+-rwxr-xr-x 1 root root        7240 2012-02-23 05:33 mkfs
+
+-rwxr-xr-x 1 root root       18248 2012-02-23 05:33 mkfs.cramfs
+
+-rwxr-xr-x 3 root root       47300 2011-07-22 14:04 mkfs.ext2
+
+-rwxr-xr-x 3 root root       47300 2011-07-22 14:04 mkfs.ext3
+
+-rwxr-xr-x 3 root root       29880 2010-01-27 08:58 mkfs.msdos
+
+-rwxr-xr-x 3 root root       29880 2010-01-27 08:58 mkfs.vfat
+```
+
+
+- mke2fs명령어는 리눅스에서 주로 사용하는 "ext2", "ext3", "ext4"타입의 리눅스 파일시스템을 생성(포맷)하는 명령어로서, fdisk명령어로 반드시 파티션작업을 한 후에 mke2fs 혹은 mkfs명령어로 파일시스템을 생성해야 한다.
+
+```mke2fs
+[root@os1 ~]# cat /etc/mke2fs.conf
+[defaults]
+             base_features = sparse_super,filetype,resize_inode,dir_index
+             blocksize = 4096
+             inode_ratio = 8192
+[fs_types]
+             small = {
+                           blocksize = 1024
+                           inode_ratio = 4096
+                    }
+             floppy = {
+                           blocksize = 1024
+             }
+             news = {
+                           inode_ratio = 4096
+             }
+             largefile = {
+                           inode_ratio = 1048576
+             }
+             largefile4 = {
+                           inode_ratio = 4194304
+             }
+```
+
+|옵션|내용|
+|---|---|
+|-T | 파일시스템타입지정(ext2,ext3,ext4등)|
+|-b | 블록크기지정|
+|-c | 파일시스템생성시 배드블록검사하기|
+|-f | 프래그먼트 크기 지정|
+|-i | inode당 바이트수를 지정|
+|-m | 예비블록지정|
+
+```mke2fs 사용
+[root@os1 /]# mke2fs -T ext4 -b 1024 /dev/sdc1
+mke2fs 1.39 (29-May-2006)
+Filesystem label=
+OS type: Linux
+Block size=1024 (log=0)
+Fragment size=1024 (log=0)
+131072 inodes, 1044192 blocks
+52209 blocks (5.00%) reserved for the super user
+First data block=1
+Maximum filesystem blocks=68157440
+128 block groups
+8192 blocks per group, 8192 fragments per group
+1024 inodes per group
+Superblock backups stored on blocks:
+             8193, 24577, 40961, 57345, 73729, 204801, 221185, 401409, 663553,
+             1024001
+
+Writing inode tables: done                           
+Writing superblocks and filesystem accounting information: done
+
+This filesystem will be automatically checked every 22 mounts or
+180 days, whichever comes first.  Use tune2fs -c or -i to override.
+```
+
+- 기존에 파일시스템의 블록크기를 확인하고자 한다면 dumpe2fs명령어를 사용하면 된다.
+```dumo2fs
+[root@os1 /]# dumpe2fs /dev/sdc1 | grep -i 'block size'
+
+dumpe2fs 1.39 (29-May-2006)
+
+Block size:               1024
+```
+
 
 ##### - fsck/e2fsck
 \# fsck/e2fsck 명령어는 마운트된 드라이브에서는 사용 금지
@@ -1146,4 +1245,39 @@ or
 > admin :: include:/etc/mail_admin
 >
 > newaliases   or  sendmail bi
+
+
+
+***
+#### blkid
+: block device 의 파일 시스템 유형이나 속성 출력 유틸리티.
+
+***
+#### chattr
+사용법
+> chattr [옵션] [+.-.=속성] [파일명]
+
+
+|옵션|내용|
+|---|---|
+|-R | 하위 디렉토리까지 재귀적으로 바꿈|
+|-V | 파일 속성을 바꾼 다음에 보여줌|
+|-v version | 지정된 파일에 버전을 설정할 수 있습니다.|
+
+|설정|내용|
+|---|---|
+|\+ | 속성을 추가|
+|\- | 속성을 제거|
+|\= | 원래 파일이 가지고 있던 그 속성만을 유지|
+
+
+|속성|내용|
+|---|---|
+|a | 파일을 추가모드로만 열수 있다. 단, vi 편집기로는 내용을 추가 할 수 없게 된다.|
+|c | 압축되어 있는 상태로 저장함.|
+|d | dump 명령을 통하여 백업받을 경우 백업받지 않습니다.|
+|i |  파일을 read-only로만 열 수 있게 설정합니다. 링크로 허용하지 않고 루트만이 이 속성을 제거 할 수 있습니다.|
+|s | 파일 삭제가 될 경우에 디스크 동기화가 일어나는 효고가가 발생합니다.|
+|S | 파일이 변경 될 경우에 디스크 동기화가 일어나는 효과가 발생합니다.|
+|u | 파일이 삭제가 되엇을 경우에는 그 내용이 저장이 되며 삭제되기 전의 데이터로 복구가 가능해 집니다.|
 

@@ -140,6 +140,32 @@
 - DocumentRoot    "/usr/local/apache/htdocs"
 : 아파치의 웹 문서들의 루트 디렉토리를 지정한다.
 
+ㅁ 예시
+```/etc/httpd.conf
+  vi /etc/httpd.conf
+
+  ServerRoot  /www
+  DocumentRoot "/usr/local/apache/html"
+  UserDir www
+  DirectoryIndex index.htm index.html index.php
+  Listen 8080                     << 아래꺼와 둘중 하나만 해주면 port 설정가능
+  ServerName www.ihd.or.kr:8080
+  ServerAdmin ihd@ihd.or.kr
+```
+
+```httpd.conf
+  vi /etc/httpd/conf/httpd
+
+  <Directory "/www/ihd/admin">
+  order Deny, Allow
+  Deny from ALL
+  Allow from 192.168.22.
+  </Direcory>
+```
+
+
+
+
 ***
 #### DNS 설정
 
@@ -211,6 +237,24 @@
 |ANY|호스트에 관련된 모든 레코드 정보|
 
 
+```DNS
+allow-query{192.168.5/24; 192.168.12.22;};
+
+forward only;
+forwarder{168.126.63.13;};
+```
+
+```
+  options {
+    directory "/var/named";
+    forawrd first;
+    forwarders  {8.8.8.8;};
+    datasize  1024M;
+    allow-query {192.168.64/24;};
+  };
+```
+
+
 <br>
 <br>
 <br>
@@ -218,27 +262,30 @@
 - Zone 설정
 : 도메인 -> IP 바꾸어주는것
 
-> @        IN    SOA     ns.ihd.or.kr.   kait.ihd.or.kr.  (
-> 
->                     20010504            ; serial
-> 
->                     10800               ; refresh
-> 
->                     3600                ; retry
-> 
->                     3600000             ; expire
-> 
->                     43200  )            ; mininum
-> 
->           IN   NS        ns.ihd.or.kr.
-> 
->           IN    A          192.168.5.13
-> 
->           IN    MX 10     ihd.or.kr.
-> 
->           www   IN    A    192.168.123.254
-> 
->           www1    IN   CNAME    www
+```
+ @        IN    SOA     ns.ihd.or.kr.   kait.ihd.or.kr.  (
+ 
+                     20010504            ; serial
+ 
+                     10800               ; refresh
+ 
+                     3600                ; retry
+ 
+                     3600000             ; expire
+ 
+                     43200  )            ; mininum
+ 
+           IN   NS        ns.ihd.or.kr.
+ 
+           IN    A          192.168.5.13
+ 
+           IN    MX 10     ihd.or.kr.
+ 
+           www   IN    A    192.168.123.254
+ 
+           www1    IN   CNAME    www
+```
+
 
 도메인은 ihd.or.kr 이고, 관리자 메일은 kait@ihd.or.kr
 ihd.or.kr 도메인으로 메일을 받을수 있도록 설정
@@ -247,25 +294,29 @@ www 도메인을 사용하는 호스트의 IP 주소를 192.168.5.13
 
 - Reverse Zone 설정
 : IP --> 도메인 바꾸어주는것
+```
+@        IN    SOA      ns.ihd.or.kr.   kait.ihd.or.kr.  (
 
-> @        IN    SOA      ns.ihd.or.kr.   kait.ihd.or.kr.  (
-> 
->                     20010504            ; serial
-> 
->                     10800               ; refresh
-> 
->                     3600                ; retry
-> 
->                     3600000             ; expire
-> 
->                     43200  )            ; mininum
-> 
->   IN  NS  ns.ihd.or.kr.
-> (15    IN)  PTR ihd.or.kr.   << 15 IN 은 생략 가능
+                    20010504            ; serial
 
-IP 주소는 10.0.2.15 이고 설정하는 도메인 ihd.or.kr   
+                    10800               ; refresh
+
+                    3600                ; retry
+
+                    3600000             ; expire
+
+                    43200  )            ; mininum
+
+  IN  NS  ns.ihd.or.kr.
+(15    IN)  PTR ihd.or.kr.   << 15 IN 은 생략 가능
+```
+
+IP 주소는 10.0.2.15 이고 설정하는 도메인 ihd.or.kr  
+
 관리자 메일 주소는 kait@ihd.or.kr로 설정한다.     
+
 네임 서버는 ns.ihd.or.kr을 사용
+
 10.0.2.15 인 IP 주소를 조회하면 ihd.or.kr가 나타나도록 설정.
 
 ***
@@ -320,6 +371,15 @@ IP 주소는 10.0.2.15 이고 설정하는 도메인 ihd.or.kr
  ㅇ movie
 : 위 설정에서 /home/movie 디렉터리를 chan 사용자에게만 접근할 수 있게 했습니다. 모든 설정을 완료한 후 삼바 서비스 데몬을 실행합니다.
 
+```samba
+vi /etc/samba/smb.conf
+[www]
+comment = web Directory
+path = /usr/local/apache/htmldocs
+valid users = ihduser kaituser
+writable = yes   or write list = ihduser kaituser
+```
+
 
 ***
 ㅁ smbclient
@@ -334,80 +394,60 @@ IP 주소는 10.0.2.15 이고 설정하는 도메인 ihd.or.kr
    smbclient {servicename} [password] [-b <buffer size>] [-d debuglevel] [-e] [-D Directory] [-U username] [-W workgroup] [-M <netbios name>] [-m maxprotocol] [-A authfile] [-N] [-g] [-l log-basename] [-I(아이) destinationIP] [-E] [-c <command string>] [-i scope] [-O <socket options>] [-p port] [-R <name resolve order>] [-s <smb config file>] [-T<c|x>IXFqgbNan] [-k]
 
  
+|옵션|내용|
+|---|---|
+|-R, --name-resolve=NAME-RESOLVE-ORDER | 네임 서버(NAME-RESOLVE-ORDER)를 지정|
+|-M, --message=HOST | 메시지를 보냄|
+|-I(아이), --ip-address=IP | IP를 지정|
+|-E, --stderr | 표준 출력으로 메시지를 출력|
+|-L, --list=HOST | 공유 리스트 목록(HOST)을 지정|
+|-t, --terminal=CODE | 터미널 I/O 코드(CODE)를 지정. \{sjis \| euc \| jis7 \| jis8 \| junet \| hex\}가 올수 있음|
+|-T, --tar=<c|x>XFqgbNan | 명령행의 tar를 지정|
+|-D, --directory=DIR | 디렉터리(DIR)를 지정|
+|-c, --command=STRING | 명령어(STRING)를 지정. 명령어 간에 세미콘론(;)으로 구분|
+|-b, --send-buffer=BYTES | 전송 버퍼의 크기(BYTES)를 지정|
+|-p, --port=PORT | 포트(PORT)를 지정|
+|-g, --grepable | grep 사용 가능한 목록으로 출력|
+|-B, --browse | DNS 를 이용하여 SMB 서버를 브라우징함|
+|-?, --help | 사용법을 출력|
+|--usage | 간단한 사용법을 출력
 
- 4) 옵션
+<br>
+<br>
+<br>
 
- -R, --name-resolve=NAME-RESOLVE-ORDER : 네임 서버(NAME-RESOLVE-ORDER)를 지정
-
- -M, --message=HOST : 메시지를 보냄
-
- -I(아이), --ip-address=IP : IP를 지정
-
- -E, --stderr : 표준 출력으로 메시지를 출력
-
- -L, --list=HOST : 공유 리스트 목록(HOST)을 지정
-
- -t, --terminal=CODE : 터미널 I/O 코드(CODE)를 지정. {sjis | euc | jis7 | jis8 | junet | hex}가 올수 있음
-
- -T, --tar=<c|x>XFqgbNan : 명령행의 tar를 지정
-
- -D, --directory=DIR : 디렉터리(DIR)를 지정
-
- -c, --command=STRING : 명령어(STRING)를 지정. 명령어 간에 세미콘론(;)으로 구분
-
- -b, --send-buffer=BYTES : 전송 버퍼의 크기(BYTES)를 지정
-
- -p, --port=PORT : 포트(PORT)를 지정
-
- -g, --grepable : grep 사용 가능한 목록으로 출력
-
- -B, --browse : DNS 를 이용하여 SMB 서버를 브라우징함
-
- -?, --help : 사용법을 출력
-
- --usage : 간단한 사용법을 출력
+|공통 삼바 옵션| 내용|
+|---|---|
+|-d, --debuglevel=DEBUGLEVEL | 디버깅 레벨(DEBUGLEVEL)을 지정|
+|-s, --configfile=CONFIGFILE | 설정파일(CONFIGFILE)을 지정|
+|-l, --log-basename=LOGFILEBASE | 로그 파일의 이름(LOGFILEBASE)을 지정|
+|-V, --version | 버전 정보 출력|
 
  
 
-<공통 삼바 옵션>
-
- -d, --debuglevel=DEBUGLEVEL : 디버깅 레벨(DEBUGLEVEL)을 지정
-
- -s, --configfile=CONFIGFILE : 설정파일(CONFIGFILE)을 지정
-
- -l, --log-basename=LOGFILEBASE : 로그 파일의 이름(LOGFILEBASE)을 지정
-
- -V, --version : 버전 정보 출력
+|접속 옵션|내용|
+|---|---|
+|-O, --socket-options=SOCKETOPTIONS | 소켓 옵션(SOCKETOPTIONS)을 지정|
+|-n, --netbiosname=NETBIOSNAME | 넷 바이오스 이름(NETBIOSNAME)을 지정|
+|-W, --workgroup=WORKGROUP | 워크 그룹(WORKGROUP)을 지정|
+|-i, --scope=SCOPE | 넷 바이오스의 범위(SCOPE)를 지정|
 
  
 
-<접속 옵션>
+|인증 옵션|내용|
+|---|---|
+|-U, --user=USERNAME | 로그인 사용자(USERNAME)를 지정|
+|-N, --no-pass | 패스워드를 묻지 않음|
+|-k, --kerberos | 커버로스 인증을 이용|
+|-A, --authentication-file=FILE | 인증 파일(FILE)을 지정|
+|-S, --signing=on|off|required | on, off, required 중에서 클라이언트 사인을 지정|
+|-P, --machine-pass | 저장된 계정 패스워드를 사용|
+|-e, -encrypt | SMB 전송을 암호화(유닉스 계열 서버만)|
 
- -O, --socket-options=SOCKETOPTIONS : 소켓 옵션(SOCKETOPTIONS)을 지정
 
- -n, --netbiosname=NETBIOSNAME : 넷 바이오스 이름(NETBIOSNAME)을 지정
-
- -W, --workgroup=WORKGROUP : 워크 그룹(WORKGROUP)을 지정
-
- -i, --scope=SCOPE : 넷 바이오스의 범위(SCOPE)를 지정
-
- 
-
-<인증 옵션>
-
- -U, --user=USERNAME : 로그인 사용자(USERNAME)를 지정
-
- -N, --no-pass : 패스워드를 묻지 않음
-
- -k, --kerberos : 커버로스 인증을 이용
-
- -A, --authentication-file=FILE : 인증 파일(FILE)을 지정
-
- -S, --signing=on|off|required : on, off, required 중에서 클라이언트 사인을 지정
-
- -P, --machine-pass : 저장된 계정 패스워드를 사용
-
- -e, -encrypt : SMB 전송을 암호화(유닉스 계열 서버만)
+```samba
+  smbclient //ihd/ihd_share
+```
 
 
 ***
@@ -519,26 +559,36 @@ REJECT자리에는 4가지가 들어간다.
 - /etc/mail/virtusertable
 : 하나의 메일 서버에 여러 도메인을 사용하는 환경에서 동일한 계정을 사용할 때 각각의 도메인으로 연결시킨다.
 
+```virtusertable
+vi /etc/mail/virtusertable
+@ihd.or.kr  ihdadmin
+
+ihd.or.kr 도메인으로 들어오는 모든 메일을 ihdadmin 계정으로 전달.
+```
+
 - ~/.forward
 : 각 사용자가 자신에게 들어오는 메일을 다른 메일로 포워딩 할 때 쓴다.
 
 ***
-#### 프록시 서버
+#### 프록시(proxy) 서버
 :서버와 클라이언트 사이에서 중계기로서 대리로 통신을 수행하는 기능
 squid.conf
 
 ㅁ 포트 설정
-> http_port 3128   -----  스퀴드 서버 포트를 설정한다. \# - default 값은 3128 이다
+> http_port 3128   
+> 스퀴드 서버 포트를 설정한다. \# - default 값은 3128 이다
 
 ㅁ 캐시 설정
-> cache_mem 8 MB ------- 스퀴드 서버에서 사용하는 캐시 사이즈를 설정한다.
+> cache_mem 8 MB   
+> 스퀴드 서버에서 사용하는 캐시 사이즈를 설정한다.
 
-> maximum_object_size 4096 KB ------ 캐시 서버에 저장될 수 있는 객체 즉, 파일의 크기를 제한하는 옵션이다.
+> maximum_object_size 4096 KB   
+> 캐시 서버에 저장될 수 있는 객체 즉, 파일의 크기를 제한하는 옵션이다.
 
 > cache_dir ufs /usr/local/squid/cache 100 16 256 
 > 
-> 캐시가 저장될 경로를 지정해주는 항목으로 크기와 생성될 하위 1차 및 2차 디렉토리의 수를 > 지정한다.    
-> 현재 설정은 /usr/local/squid/cache 디렉토리에 캐시데이터들이 최대 100MB 까지 저장될 수 > 있고, 캐시가 저장될 1차 디렉토리는 16 개로 설정하고 그 밑에 2차 디렉토리 수를 256 개로 > 설정한다.   
+> 캐시가 저장될 경로를 지정해주는 항목으로 크기와 생성될 하위 1차 및 2차 디렉토리의 수를 지정한다.    
+> 현재 설정은 /usr/local/squid/cache 디렉토리에 캐시데이터들이 최대 100MB 까지 저장될 수 있고, 캐시가 저장될 1차 디렉토리는 16 개로 설정하고 그 밑에 2차 디렉토리 수를 256 개로 > 설정한다.   
 
 > cache_mgr admin ----- 캐시서버의 관리자 계정을 지정한다.
 
@@ -578,42 +628,59 @@ squid.conf
 ㅁ 접근 설정
 > visible_hostname 호스트이름 ----- squid 서버에 특정 호스트 이름을 부여할수 있다.
 
->acl all src 0.0.0.0/0.0.0.0 
->
->ACL은 Access Control의 약자로 프록시 서버에 접근할 수 있는 범위를 설정하는 옵션으로 >http_access와 함께 사용해야 한다. 
->
->all의 범위는 src옵션으로 지정한 범위는 속하는 네트워크를 지정한다. 
->현재처럼 0.0.0.0/0.0.0.0으로 설정하면 모든 네트워크에 대해서 프록시서버에 접근할 수 있다. 
->
->자신의 프록시서버에 제한없이 모든 네트워크들이 접근할 수 있도록 설정한 후 httpd_access로 >프록시 서버사용권한을 부여할 수 있다.
+```
+acl all src 0.0.0.0/0.0.0.0 
 
-> acl all src 0.0.0.0/0.0.0.0
-> http_access allow all
-> 
-> 모든 네트워크들이 자신의 프록시서버를 이용할 수 있게 지정한 것이다. 
-> 이 경우에는 네트워크 트래픽을 초래할 수 있다. 
+ACL은 Access Control의 약자로 프록시 서버에 접근할 수 있는 범위를 설정하는 옵션으로 >http_access와 함께 사용해야 한다. 
 
+all의 범위는 src옵션으로 지정한 범위는 속하는 네트워크를 지정한다. 
+현재처럼 0.0.0.0/0.0.0.0으로 설정하면 모든 네트워크에 대해서 프록시서버에 접근할 수 있다. 
 
->http_access deny all
->
->클라이언트가 프록시 서버에 접속을 허용할 것인지 거부할 것인지 결정해주는 옵션으로 acl과 함께 사용된다. 
->http_access다음에 all 또는 deny를 지정하고 acl리스트 중 하나를 지정해 사용한다.
+자신의 프록시서버에 제한없이 모든 네트워크들이 접근할 수 있도록 설정한 후 httpd_access로 >프록시 서버사용권한을 부여할 수 있다.
+```
+
+```
+ acl all src 0.0.0.0/0.0.0.0
+ http_access allow all
+ 
+ 모든 네트워크들이 자신의 프록시서버를 이용할 수 있게 지정한 것이다. 
+ 이 경우에는 네트워크 트래픽을 초래할 수 있다. 
+```
 
 
-> acl user src 192.168.3.69            
-> acl all src 0.0.0.0/0.0.0.0               
-> http_access allow ser            
-> http_access deny all                   
-> 
->192.168.3.69 네트워크주소를 user 만 프록시서버 접속을 허용하고, 다른 네트워크에 대해서는 접속을 거부한다.
+```
+http_access deny all
+
+클라이언트가 프록시 서버에 접속을 허용할 것인지 거부할 것인지 결정해주는 옵션으로 acl과 함께 사용된다. 
+http_access다음에 all 또는 deny를 지정하고 acl리스트 중 하나를 지정해 사용한다.
+```
+
+```
+ acl user src 192.168.3.69            
+ acl all src 0.0.0.0/0.0.0.0               
+ http_access allow ser            
+ http_access deny all                   
+ 
+192.168.3.69 네트워크주소를 user 만 프록시서버 접속을 허용하고, 다른 네트워크에 대해서는 접속을 거부한다.
+```
+
+```squid
+http_port 8080
+
+acl ihdnet src 192.168.5.0/24
+http_access allow ihdnet
+```
+
 
 <br>           
->acl members src 192.168.3.0/255.255.255.0           
->acl all src 0.0.0.0/0.0.0.0             
->http_access allow members              
->http_access deny all                     
-> 
-> 192.168.3.0 네트워크주소를 members 범위로 규정하여 http_access 에서 프록시서버 접속을 >허용하고, 다른 네트워크에 대해서는 접속을 거부한다.
+```
+acl members src 192.168.3.0/255.255.255.0           
+acl all src 0.0.0.0/0.0.0.0             
+http_access allow members              
+http_access deny all                     
+ 
+ 192.168.3.0 네트워크주소를 members 범위로 규정하여 http_access 에서 프록시서버 접속을 >허용하고, 다른 네트워크에 대해서는 접속을 거부한다.
+```
 
 ***
 #### xinetd 설정 파일
@@ -632,42 +699,43 @@ xinetd.conf 파일에는 default 설정 값이 포함되어있습니다.
 서비스별로 개별적인 설정이 필요한 경우 /etc/xinetd.d/ 밑에 서비스 별 설정 파일을 수정할 수 있습니다.
 
  
-
+```xinetd.conf
  This is the master xinetd configuration file. Settings in the
  default section will be inherited by all service configurations
  unless explicitly overridden in the service configuration. See
 xinetd.conf in the man pages for a more detailed explanation of
 
-> defaults        
-> {         
-> \# The next two items are intended to be a quick access place to                             
-> \# temporarily enable or disable services.                
-> \#              
-> \#       enabled         =                    
-> \#       disabled        =                             
->                  
-> \# Define general logging characteristics.             
->         log_type        = SYSLOG daemon info                     
->         log_on_failure  = HOST                
->         log_on_success  = PID HOST DURATION EXIT               
->                  
-> \# Define access restriction defaults                         
-> \#                           
-> \#       no_access       =                                    
-> \#       only_from       =                   
-> \#       max_load        = 0                    
->         cps             = 50 10             
->         instances       = 50                    
->         per_source      = 10                                   
->                 
-> \# Address and networking defaults            
-> \#               
-                        
+ defaults        
+ {         
+  The next two items are intended to be a quick access place to                             
+  temporarily enable or disable services.                
+               
+        enabled         =                    
+        disabled        =                             
+                
+  Define general logging characteristics.             
+       log_type        = SYSLOG daemon info                     
+       log_on_failure  = HOST                
+       log_on_success  = PID HOST DURATION EXIT               
+                
+  Define access restriction defaults                         
+                            
+        no_access       =                                    
+        only_from       =                   
+        max_load        = 0                    
+       cps             = 50 10             
+       instances       = 50                    
+       per_source      = 10                                   
+               
+  Address and networking defaults            
+                
+
+```                        
             
 3-1  /etc/xinetd.conf 파일
  
 - 로그파일을 rsyslog 등 시스템 로그에서 관리되도록 위임하거나, 별도의 파일로 선택할 수 있습니다.
-> log_type = SYSLOG | FILE
+> log_type = SYSLOG | FILE  경로명
 
 - 접속에 실패했을 때 기록될 값을 정합니다.           
  > log_on_failure = HOST | USERID | ATTEMPT
@@ -691,7 +759,8 @@ xinetd.conf in the man pages for a more detailed explanation of
 
  
 - no_access = 접속 불가능한 호스트
-> only_form = 접속 가능한 호스트
+
+- only_form = 접속 가능한 호스트
 
 
 - only_form과 no_access가 중복되면 차단됩니다.
@@ -705,22 +774,27 @@ xinetd.conf in the man pages for a more detailed explanation of
 3-2  /etc/xinetd.d 
             
 cat /etc/xinetd/rsync 파일
-> [root@localhost xinetd.d]# cat rsync        
-> \# default: off                    
-> \# description: The rsync server is a good addition to an ftp server, as it                                     
-> \# allows crc checksumming etc.                
-> service rsync                
-> {                             
-> disable = yes            
-> flags = IPv6                                
-> socket_type     = stream               
-> wait            = no                
-> user            = root                        
-> server          = /usr/bin/rsync                         
-> server_args     = --daemon             
-> log_on_failure  += USERID                        
-> }              
-> [root@localhost xinetd.d]\#                             
+```
+ [root@localhost xinetd.d]# cat rsync        
+ \# default: off                    
+ \# description: The rsync server is a good addition to an ftp server, as it                                     
+ \# allows crc checksumming etc.                
+ service rsync  <<<< telnet 등 서비스 이름               
+ {                             
+ disable = yes            
+ flags = IPv6                                
+ socket_type     = stream               
+ wait            = no           
+ nice            = 5
+ acess_times     = 08:00-20:00     
+ per_source      = 7
+ log_type        = FILE var/log/telnetd.log
+ user            = root                        
+ server          = /usr/bin/rsync                         
+ server_args     = --daemon             
+ log_on_failure  += USERID                        
+ }              
+```
  
 
 디렉터리 하위에 서비스 명으로 된 설정 파일을 만들어 서비스(ssh, ftp 등등) 별로 설정할 수 있습니다. 
@@ -735,6 +809,7 @@ cat /etc/xinetd/rsync 파일
 
 4. server : 서비스가 연결되었을 때 실행할 프로그램입니다.
 
+5. nice : 서버 우선순위
  
 이 외에도 xinetd.conf 상의 설정값들은 대부분 이용 가능하다. access_time, redirect, port, nice 등의 설정도 가능합니다.
 
@@ -823,5 +898,51 @@ nis.test.co.kr
 > ypchfn testuser
 
 
+```nfs의 exprots
+vi /etc/exprots
+/nfs_share 192.168.5.0/24(rw, no_root_squash)
+```
             
-        
+***
+#### 디바이스 장치 추가 fstab
+
+```fstab
+/dev/sdb  /data     ext4  defaults,usrquota   0   1
+
+/dev/sdb을 /data 디렉터리에 ext4로 자동 마운트
+
+부팅시 /dev/sb1 디바이스의 파일시스템 점검하고, dump 안함
+```
+
+
+***
+#### dhcpd.conf
+
+```dhcp.conf
+ddns-update-sylte nome;
+subnet 192.168.100.0 netmask 255.255.255.0 {
+  range 192.168.100.101 192.168.100.199;
+  option  domain-name-servers ns.linuxmaster.org;
+  option  domain-name "linuxmaster.org;
+  option router 192.168.100.254;
+  default-lease-time 3600;
+  max-lease-time 7200;
+
+할당 IP 192.168.100.101 ~ 192.198.100.199
+도메인 네임 서버는 ns.linuxmaster.org
+도메인 명 linuxmaster.org
+게이트웨이 IP 주소는 192.168.100.254
+```
+
+
+***
+#### vsftpd
+
+```
+  vi  vistpd.conf
+
+  local_umask = 002              파일 생성 적용되는 umask 값
+  listen_port = 21               vsftpd 데몬이 외부 접속 요청시 통신할 ftp 포트       
+  xferlog_enable  = YES          파일 송수신 로그 지정된 파일에 저장
+
+```
