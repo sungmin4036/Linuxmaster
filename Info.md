@@ -1045,3 +1045,105 @@ iptables-extensions man page 에서는 local network 를 벗어나는 packet 에
 
 > quota   
 → 현재 사용자의 쿼터 정보를 알려줘
+
+***
+#### 커널 매개 변수(parameter) 제어   
+- 커널 파라미터란?
+: 리눅스에서 사용되는 시스템 변수들을 의미하며, 커널 변수 값을 제어하여 시스템을 운영 용도에 맞게 최적화 할 수 있는 설정 입니다.   
+커널 매개변수의 경로는 /proc/sys 디렉토리 밑에 존재하고 커널 파라미터의 절대 경로의 수정을 통해 설정 변경이 가능하지만    
+sysctl 을 통해서 간편하게 설정할 수 있습니다.
+
+1. 영구 설정 방법(재부팅 이후에도 설정 적용)
+
+1) kernel parameter 추가
+
+> vi /etc/sysctl.conf
+> kernel.sysrq = 1
+
+
+2) 설정 적용
+
+> sysctl -p
+
+ 
+
+3) 추가 설정한 파라미터 적용 확인
+
+> sysctl -a |grep kernel.sysrq
+>  kernel.sysrq = 1
+
+or
+
+> sysctl kernel.sysrq
+> kernel.sysrq = 1
+ 
+
+ 
+4. 임시 설정 방법(재부팅 후에는 설정 미적용)
+
+
+1) kernel parameter 추가
+
+> sysctl -w kernel.sysreq=1
+> kernel.sysrq = 1
+
+ 
+
+2) 추가 설정한 파라미터 적용 확인
+
+> sysctl -a |grep kernel.sysrq
+> kernel.sysrq = 1
+
+or
+
+> sysctl kernel.sysrq
+> kernel.sysrq = 1
+
+ 
+
+
+1. "sysctl -p" 와 "sysctl --system" 차이
+: 위에 언급된 설정 방법이 /etc/sysctl.conf 만 해당되었다면 "--system" 옵션은 아래와 같이 모든 경로의 설정을 포함 합니다.
+따라서, /etc/sysctl.conf 의 설정이 아닌 연관된 모든 경로의 설정에 따로 추가를 하였다면 "--system" 옵션을 통해 적용해야 합니다.
+
+
+1) "--system" 옵션에 영향 받는 모든 파일 목록
+
+> /run/sysctl.d/*.conf
+> /etc/sysctl.d/*.conf
+> /usr/local/lib/sysctl.d/*.conf
+> usr/lib/sysctl.d/*.conf
+> /lib/sysctl.d/*.conf
+> /etc/sysctl.conf
+ 
+
+2) 설정 적용 방법
+
+> sysctl --system
+> \* Applying /usr/lib/sysctl.d/00-system.conf ...
+> \* Applying /usr/lib/sysctl.d/10.default.yama-scope.conf ...
+> kernel.yama.ptrace_scope = 0
+> ...
+>
+> kernel.sysrq = 16
+> net.ipv4.conf.default.rp_filter = 1
+> ...
+
+자주사용하는 파라미터
+
+![image](https://user-images.githubusercontent.com/62640332/140597042-a1377893-b1a1-45cc-97ad-dcdcb4db3a03.png)
+
+![image](https://user-images.githubusercontent.com/62640332/140597079-d1ed116d-948e-43cd-bf6a-4e5d152d8ae5.png)
+
+![image](https://user-images.githubusercontent.com/62640332/140597100-f1a28cf5-97a3-493f-a092-bb717fd01671.png)
+
+
+***
+#### mail 보내는 설정 비교
+
+> vi /etc/aliases
+> webmaster ; ihduser, kaituser
+> admin :: include:/etc/mail_admin
+>
+> newaliases   or  sendmail bi
+
