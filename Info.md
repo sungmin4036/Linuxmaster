@@ -1,21 +1,35 @@
 #### RAID 설정: mdadm
-
-- RAID 어레이 상태를 확인하기
-> [root@localhost ~]# more /proc/mdstat
-Personalities : [raid1]
-md0 : active raid1 sda[0] sdb[0]
-40692224 blocks 256k chunks
-
-- RAID 설정 파일 생성 하기
-> [root@AP1 /]# more /etc/mdadm.conf 
-DEVICE /dev/sdb /dev/sdc
-ARRAY /dev/md0 devices=/dev/sdb,/dev/sdc
-
+          
+- RAID 어레이 상태를 확인하기                          
+> [root@localhost ~]# more /proc/mdstat       
+Personalities : [raid1]              
+md0 : active raid1 sda[0] sdb[0]                     
+40692224 blocks 256k chunks                          
+              
+- RAID 설정 파일 생성 하기                    
+> [root@AP1 /]# more /etc/mdadm.conf              
+DEVICE /dev/sdb /dev/sdc              
+ARRAY /dev/md0 devices=/dev/sdb,/dev/sdc               
+                  
 - RAID 구성 명령어 실행
 > [root@AP1 etc]# mdadm -C /dev/md0 --level=raid1 --raid-devices=2 /dev/sdb /dev/sdc
 
 - (RAID 포멧하기)
 > [root@AP1 proc]# mkfs.ext4 /dev/md0
+***
+#### uesrmod
+
+|사용법|내용|
+|---|---|
+|usermod <계정> -l <바꿀 계정>|계정명을 바꿀 계정명 으로 변경합니다. (사용 비 권장)|
+|usermod -c <"이름"> <계정>| 계정의 이름을 변경합니다.|
+|usermod -d <"경로"> <계정>| 계정의 홈 디렉터리를 변경합니다.|
+| usermod -s <"셸"> <계정>| 계정의 로그인 기본 셸을 변경합니다.|
+|usermod -e <날짜> <계정>| 계정이 해당 날짜에 만료되도록 합니다. ex) usermod -e 2018-05-01 myuser|
+|usermod -g <그룹> <계정>| 사용자의 기본 소속 그룹을 변경합니다.|
+|usermod -G <그룹> <계정>|계정의 소속 그룹을 변경합니다. 만약 여러 그룹을 지정할 때에는 ,(콤마) 로 구분하여 지정합니다.|
+|usermod -a -G <그룹> <계정>| 계정의 소속 그룹을 추가(add) 합니다.|
+
 
 ***
 #### useradd 옵션
@@ -33,50 +47,6 @@ ARRAY /dev/md0 devices=/dev/sdb,/dev/sdc
 |-f|패스워드의 만기일을 날짜 수로 지정한다.|useradd -f 3 user10|
 |-e|계정의 만기일을 YYYY-MM-DD 형식으로 지정한다.|useradd -e '2020-12-31' user9|
 |-u|사용자 추가 시에 UID 값을 지정한다.|useradd -u 1004 user7|
-
-***
-#### usermod
-
-ㅁ usermod [option] 사용자계정 
-
-|옵션|의미|
-|---|---|
-|-d(--home)|사용자의 홈 디렉터리를 변경한다. 변경할 디렉터리는 미리 생성되어야 한다. -m과 같이 사용하면 사용하던 홈 디렉터리 파일과 디렉터리도 같이 옮겨준다.|
-|-m|사용자의 홈 디렉터리 변경 시 기존에 사용하던 파일 및 디렉터리를 옮겨주는 옵션으로 -d와 함께 쓰인다. |
-|-g|사용자의 그룹을 변경한다.|
-|-s| 사용자의 쉘 변경 한다.|
-|-u|사용자의 UID 값 변경한다.|
-|-e| 계정 만기일 변경 YYYY-MM-DD or MM/DD/YY 형태|
-|-f|패스워드 만기일이 지난후 패스워드에 Lock 유예기간 설정|
-|-c|사용자의 간단한 정보를 입력하거나 변경한다.|
-|-G|추가로 다른 그룹에 속하게 할때 사용|
-|-a(--append)| -G옵션과 같이 사용하는 옵션으로 기존의 2차 그룹 이외에 추가로 2차 그룹을 지정할때 사용|
-|-p|/etc/shadow의 두번째 필드인 암호화된 패스워드 값 변경시 사용.|
-|-l(--login)|사용자의 아이디 변경|
-|-L(--lock)|사용자의 패스워드에 LOCK을 걸어 로그인을 막는다.|
-|-U(--unlock)|사용자의 패스워드에 걸린 LOCK을 푼다.|
-
-- 사용예시
-> [사용자 계정 변경]
-usermod -l [변경후아이디] [변경전아이디] (명령어)
-
-> [홈 디렉터리 변경]
-usermod -d /develop/jhyang jhyang (명령어)
-
-> [코멘트달기]
-usermod -c "IT department" jhyang (명령어)
-
-> [계정 유효기간 설정]
-usermod -e 2020-06-01 jhyang (명령어)
-
-> [그룹 변경하기]
-usermod -g [변경후그룹] jhyang (명령어)
-
-> [추가그룹]
-usermod -G IHD jhyang (명령어)
-
-> [사용자 셸 변경하기]
-usermod -s /bin/false jhyang (명령어)
 
 ***
 
@@ -186,76 +156,21 @@ rpm <옵션> <패키지>
  + rpm -qpl : 설치되지 않은 패키지 파일안의 파일들을 출력
  + rpm -qpi : 설치할 패키지 파일의 상세 정보를 출력
 
-***
-#### /etc/rsyslog.conf
-
-> 설정파일의 구성: facility.priority; facility.priority;    action
 
 
-- Facility
-> ① cron: cron, at과 같은 스케쥴링
-② auth, security: login과 같은 인증
-③ authpriv: ssh와 같이 인증이 필요한
-④ daemon: telnet, ftp 등과 같은 데몬
-⑤ kern: 커널
-⑥ lpr: 프린트
-⑦ mail: 메일
-⑧ mark: syslogd에 의해 만들어지는 날짜 유형
-⑨ user: 사용자 프로세스
 
-- Priority
-> ① none: 지정한 facility를 제외
-② debug: 프로그램 디버깅
-③ info: 통계, 기본 정보 메시지
-④ notice: 특별히 주의를 요하나, 에러는 아님
-⑤ warning, warn: 주의가 필요한 경고 메시지
-⑥ error, err: 에러 발생
-⑦ crit: 크게 급하지는 않지만 시스템에 문제가 생김
-⑧ alert: 즉각 조치 필요
-⑨ emerg, panic: 모든 사용자들에게 전달해야 할 위험한 상황
-
-- Action
->① file: 지정한 파일에 로그 기록
-② @host: 지정한 호스트로 메시지 전달
-③ user: 지정한 사용자가 로그인 한 경우, 해당 사용자의 터미널로 전달
-④ *: 현재 로그인 되어 있는 모든 사용자의 화면으로 전달
-⑤ 콘솔 또는 터미널: 지정한 터미널로 메시지 전달
-
-예시
-
-- 보안 및 승인에 관한 메세지 중에서 모든 경우를 /var/log/secure 에 보낸다.
-> authpriv.*    /var/log/secure
-
-- 모든 상황에서 발생하는 메세지 중에서 info 수준(통계 및 기본정보) 이상인 경우를 /var/log/messages에 보낸다. 단, mail 관련 메세지는 제외한다.
-> *.info;mail.none    /var/log/messages
-
-- 모든 상황에서 발생하는 메세지 중에서 info 수준(통계 및 기본정보) 인 경우를 /var/log/hihi에 보낸다.
-> *.=info    /var/log/hihi                                                                                       
-                        
-- mail 관련된 메세지 중에서 info 수준의 메세지를 제외하여 /var/log/maillog에 기록한다.
-> mail.*;mail.!=info    /var/log/maillog
-
-- mail 관련된 모든 메세지 /var/log/mail에 기록, debug 수준의 로그는 제외
-> mail.*;mail.! = debug  /var/log/mail
-
-- uucp 및 news 에서 방생하는 warning 수준이상의 메세지는 /var/log/news에 기록
-> uucp,news,warn or uucp,news,warning or uucp.warn; news.warn /var/log/news
-
-- 모든 서비스에 대해 alter 이상의 메세지는 IP 주소가 192.168.12.22인 호스트에 UDP 기반으로 전달한다.
-> *.alter @192.168.12.22
-
-**\# 골뱅이 하나면 UDP, 두개면 TCP**
 ***
 #### 네트워크 포트 확인
 - netstat
 > 사용방법: netstat -ltup
 
-
-> -l: netstat에 모든 수신 소켓을 표시한다.
--t: 모든 TCP 연결을 표시한다.
--u: 모든 UDP 연결을 표시한다.
--p: 포트에서 수신하는 어플리케이션/데몬의 이름을 표시한다.
--n: 서비스 이름 대신 port 번호를 표시한다.
+|옵션|내용|
+|---|---|
+|-l| netstat에 모든 수신 소켓을 표시한다.|
+|-t| 모든 TCP 연결을 표시한다.|
+|-u| 모든 UDP 연결을 표시한다.|
+|-p| 포트에서 수신하는 어플리케이션/데몬의 이름을 표시한다.|
+|-n| 서비스 이름 대신 port 번호를 표시한다.|
 
 
 
@@ -370,7 +285,7 @@ nmap -sT 192.168.100.128
 * IPv4 또는 IPv6 포트만 표시
 > lsof -i 4
 
-* 특정 사용자 제외, 사용자 지정 옵션인 -u 에 ^를 추가하면 특정 사용자는 제외할 수 있다
+* 특정 사용자 제외, 사용자 지정 옵션인 -u 에 ^를 추가하면 특정 사용자는 제외할 수 있다       
 > lsof -u^lesstif -u ^root
 
 * 열린 모든 네트워크 포트 표시
@@ -381,7 +296,7 @@ nmap -sT 192.168.100.128
 > UDP 만 lsof -i UDP
 
 
-* 특정 프로세스가 오픈한 파일 표시, -p(소문자) 옵션뒤에 PID 를  주면 된다.
+* 특정 프로세스가 오픈한 파일 표시, -p(소문자) 옵션뒤에 PID 를  주면 된다.             
 > lsof -p 123
 
 
@@ -389,65 +304,74 @@ nmap -sT 192.168.100.128
 #### 백업
 
 - cpio
-> -o : 표준 출력으로 보내 사용한다. (create)
-> -c : 아카이브 포맷 형식을 'newc'로 지정한다.
-> -d : 필요할 경우 디렉터리를 생성한다.
-> -t : 내용만 확인할 때 사용한다.
-> -F : 표준 입출력전환 기호 대신 파일명을 지정할 때 사용한다.
-> -H [포맷] : 아카이브 포맷 형식을 지정한다.
-> -i : 표준 입력으로 받을 때 사용한다. (백업한 자료를 불러올때)
-> -v : 과정을 출력한다.
+
+|옵션|내용|
+|---|---|
+|-o | 표준 출력으로 보내 사용한다. (create)|
+| -c| 아카이브 포맷 형식을 'newc'로 지정한다.|
+| -d | 필요할 경우 디렉터리를 생성한다.|
+| -t | 내용만 확인할 때 사용한다.|
+| -F | 표준 입출력전환 기호 대신 파일명을 지정할 때 사용한다.|
+| -H [포맷] |아카이브 포맷 형식을 지정한다.|
+|-i | 표준 입력으로 받을 때 사용한다. (백업한 자료를 불러올때)|
+| -v | 과정을 출력한다.|
 
 사용방법
->]# find /home | cpio -ocv > home.cpio
-/home 를 home.cpio 파일로 백업한다.
+>]# find /home | cpio -ocv > home.cpio               
+/home 를 home.cpio 파일로 백업한다.                     
 
->]# cpio -icdv < home.cpio
-home.spio의 현재 내용을 디렉터리에 복원한다.
+>]# cpio -icdv < home.cpio                       
+home.spio의 현재 내용을 디렉터리에 복원한다.                 
 
-- dump
-: dump에는 0~9 단계의 레벨을 가지고 있는데, 0단계는 전체백업을 의미하며   
-1 ~ 9단계는 부분백업시에 사용하며, 작업정보를 따로 파일에 기록
+- dump                 
+: dump에는 0~9 단계의 레벨을 가지고 있는데, 0단계는 전체백업을 의미하며                
+1 ~ 9단계는 부분백업시에 사용하며, 작업정보를 따로 파일에 기록                 
 
-파일시스템의 설정정보가 들어있는 /etc/fstab을 이용해서 dump 백업이 이루어지며
-데이터를 복원할 때는 restore 명령을 사용한다.
+파일시스템의 설정정보가 들어있는 /etc/fstab을 이용해서 dump 백업이 이루어지며                              
+데이터를 복원할 때는 restore 명령을 사용한다.             
 
-dump [파일명] [백업대상]
-> -0 ~ -9 : 레벨을 지정한다.
--f : 백업할 매체나 파일명을 지정한다.
--u : 작업 후 /etc/dumpdates 파일에 관련 정보를 기록한다.
+dump [파일명] [백업대상]            
+> -0 ~ -9 : 레벨을 지정한다.            
+-f : 백업할 매체나 파일명을 지정한다.                        
+-u : 작업 후 /etc/dumpdates 파일에 관련 정보를 기록한다.                
+           
+사용방법                                 
+> ]# dump -0u -f test.dump /dev/sdb1                    
+/dev/sdb1 를 test.dump 에 전체백업 후 작업정보를 dumpdates파일에 기록한다.                   
 
-사용방법
-> ]# dump -0u -f test.dump /dev/sdb1
-/dev/sdb1 를 test.dump 에 전체백업 후 작업정보를 dumpdates파일에 기록한다.
+                         
+> ]# dump -5u -f 1111.dump /home                        
+/home 디렉터리를 1111.dump 이름으로 5레벨로 백업 후 작업정보를 dumpdates 파일에 기록한다.            
 
- 
-> ]# dump -5u -f 1111.dump /home
-/home 디렉터리를 1111.dump 이름으로 5레벨로 백업 후 작업정보를 dumpdates 파일에 기록한다.
+- restore                                
+                     
+> restore [백업 파일명]
 
-- restore
-restore [백업 파일명]
->-i : 대화식으로 복구할 파일을 선택 후 복원
--f : 백업할 매체나 파일명 지정
--r : 전체 복원시에 사용
+|옵션|내용|
+|---|---|
+|-i | 대화식으로 복구할 파일을 선택 후 복원|                
+|-f | 백업할 매체나 파일명 지정|                               
+|-r | 전체 복원시에 사용|                    
 
-사용방법
-> ]# restore -rf test.dump
-test.dump 파일에 저장된 데이터를 전체 복원한다.
+사용방법                      
+
+> restore -rf test.dump                       
+test.dump 파일에 저장된 데이터를 전체 복원한다.                  
 
 - tar
-  
+   
 - dd(Disk & Dump)
-
-> *  사용될 수 있는 블럭 크지 지정의 문자들은 다음과 같다:
-> b=512, c=1, k=1024, w=2, xm=number m
-> * --help: 도움말을 보여주고 마친다.
-> * --version:  버전 정보를 보여주고 마친다.
-> * if=file: 표준 입력 대신에 지정한 file을 입력 대상으로 한다.
-> * of=file: 표준 출력 대신에 지정한 file을 출력 대상으로 한다.  conv=notrunc  옵션을 사용하지 않는 한은, seek= 바이트 크기에 따라 ( seek= 크기가 0아닌 한) 지정한 크기에 따라 출력 파일을 자른다.
-> * ibs=bytes: 한번에 bytes 바이트씩 읽는다.
-> * obs=bytes: 한번에 bytes 바이트씩 쓴다.
-> * bs=bytes:  한번에 bytes 바이트씩 읽고 쓴다.  ibs, obs 값 무시.
+                                                   
+> *  사용될 수 있는 블럭 크지 지정의 문자들은 다음과 같다:                                  
+> b=512, c=1, k=1024, w=2, xm=number m                                    
+> * --help: 도움말을 보여주고 마친다.                                        
+> * --version:  버전 정보를 보여주고 마친다.                                
+> * if=file: 표준 입력 대신에 지정한 file을 입력 대상으로 한다.             
+> * of=file: 표준 출력 대신에 지정한 file을 출력 대상으로 한다.           
+conv=notrunc  옵션을 사용하지 않는 한은, seek= 바이트 크기에 따라 ( seek= 크기가 0아닌 한) 지정한 크기에 따라 출력 파일을 자른다.
+> * ibs=bytes: 한번에 bytes 바이트씩 읽는다.                                           
+> * obs=bytes: 한번에 bytes 바이트씩 쓴다.                                               
+> * bs=bytes:  한번에 bytes 바이트씩 읽고 쓴다.  ibs, obs 값 무시.                                                     
 > * cbs=bytes: 한번에 bytes 바이트씩 변환한다.
 > * skip=blocks: 입력 시작에서 blocks 단위 만큼 ibs 크기를 건너띈다.(가령 skip=5, ibs=10 이면, 처음 50바이트를건너띄어 작업을 계속한다.)
 > * seek=blocks: 출력 시작에서 blocks 단위 만큼 ibs 크기를 건너띈다.
@@ -469,61 +393,71 @@ test.dump 파일에 저장된 데이터를 전체 복원한다.
 
 
 사용방법
->a.txt 파일 안에 있는 문자를 전부 소문자로 변환해서 b.txt파일로 저장한다.
+> a.txt 파일 안에 있는 문자를 전부 소문자로 변환해서 b.txt파일로 저장한다.                     
 dd if=a.txt of=b.txt conv=lcase
 
->/dev/sdb1의 내용을 그대로 /dev/sdc1으로 백업 진행하는데, 블록 크기는 1KB로 지정한다.
+>/dev/sdb1의 내용을 그대로 /dev/sdc1으로 백업 진행하는데, 블록 크기는 1KB로 지정한다.            
 dd if=/dev/sdb1 of=/dev/sdc1 bs=1k
 
 
-- rsync
->rsync [백업파일] [백업되는 위치]
--r : 하위 디렉터리까지 실행
--l : 심볼릭 링크를 보존한다.
--L : 심볼릭 링크가 가리키는 파일을 복사한다.
--p : 권한을 보존한다.
--t : 타임스탬프를 보존한다.
--g : 그룹소유권을 보존한다.
--o : 소유권을 보존한다.
--H : 하드링크 보존
--v : 진행상황을 출력
--u : 업데이트된 내용만 전송
--z : 전송할 때 압축
--b : 백업시 동일한 파일이 존재하는 경우 ~를 붙여서 생성한다.
--a : -rlptgoD를 한번에 실행할 때 사용 (--archive)
---progress : 파일이 전송되는 동안 전송 상황정보를 출력한다.
+- rsync        
+> rsync [백업파일] [백업되는 위치]
+
+|옵션|내용|
+|---|---|
+|-r | 하위 디렉터리까지 실행|
+|-l | 심볼릭 링크를 보존한다.|
+|-L | 심볼릭 링크가 가리키는 파일을 복사한다.|
+|-p | 권한을 보존한다.|
+|-t | 타임스탬프를 보존한다.|
+|-g | 그룹소유권을 보존한다.|
+|-o | 소유권을 보존한다.|
+|-H | 하드링크 보존|
+|-v | 진행상황을 출력|
+|-u | 업데이트된 내용만 전송|
+|-z | 전송할 때 압축|
+|-b | 백업시 동일한 파일이 존재하는 경우 ~를 붙여서 생성한다.|
+|-a | -rlptgoD를 한번에 실행할 때 사용 (--archive)|
+|--progress | 파일이 전송되는 동안 전송 상황정보를 출력한다.|
 
 사용방법
->]# rsync -av /home /home5
+> rsync -av /home /home5     
 /home를 그대로 유지하면서 /home5로 백업한다.
 
->]# rsync -avz 192.168.2.20:/test /backup
+> rsync -avz 192.168.2.20:/test /backup    
 192.168.2.20로 원격접속후 /test 파일을 압축해서 /backup로 복사한다.
 
-
->]#  rsync -avz -e ssh other@192.168.2.20:/test ~/backup
--e옵션은 원격지에 접속시 프로토콜을 지정한다.
- (최근에는 생략하면 자동으로 ssh를 사용한다.)
- 192.168.2.20 원격지로 other 계정으로 접속 후 test 파일을 압축해서 복사한다.
+> rsync -avz -e ssh other@192.168.2.20:/test ~/backup    
+-e옵션은 원격지에 접속시 프로토콜을 지정한다.  (최근에는 생략하면 자동으로 ssh를 사용한다.)    
+ 192.168.2.20 원격지로 other 계정으로 접속 후 test 파일을 압축해서 복사한다.    
 
 ***
 #### firewall-cmd
 
-방화벽 실행 여부 확인, 실행 중이면 running, 실행 중이 아니면 not running을 출력합니다.
+- 방화벽 실행 여부 확인, 실행 중이면 running, 실행 중이 아니면 not running을 출력합니다.
 > firewall-cmd --state
 
-방화벽 다시 로드, 방화벽 설정 후 다시 로드해야 적용됩니다.
+<br>
+
+- 방화벽 다시 로드, 방화벽 설정 후 다시 로드해야 적용됩니다.
 > firewall-cmd --reload
 
-존(Zone) 출력하기
+<br>
+
+- 존(Zone) 출력하기
 > firewall-cmd --get-zones
 
-존(zone) 목록을 출력합니다.
+<br>
+
+- 존(zone) 목록을 출력합니다.
 > firewall-cmd --get-default-zone
 
-기본 존을 출력합니다, 활성화된 존을 출력합니다.
+<br>
+
+- 기본 존을 출력합니다, 활성화된 존을 출력합니다.
 > firewall-cmd --get-active-zones
 
+<br>
 
 ##### 사용 가능한 서비스/포트 출력하기
 사용 가능한 모든 서비스/포트 목록을 출력합니다.public 존에 속한 사용 가능한 모든 서비스/포트 목록을 출력합니다.
@@ -587,8 +521,8 @@ firewall-cmd --permanent --add-service=ftp
 |-M|패스워드 변경 없이 사용 가능한 최대 날짜를 지정합니다. 즉 한 번 설정한 패스워드의 만기일을 지정합니다.|
 |-I|패스워드 최대 사용기간 만료 후에 실제 패스워드 잠금을 설정하기까지의 유예기간을 지정합니다.|
 |-E|계정이 만기되는 날을 지정합니다. MM/DD/YY 또는 YYYY-MM-DD 형태로 지정.|
-|-W|패스워드 만료 전 변경을 요구하는 경고 날짜를 지정합니다.
- |
+|-W|패스워드 만료 전 변경을 요구하는 경고 날짜를 지정합니다.|
+	
 
 ##### passwd 와 chage 비교
 |비교|passwd|chage|
@@ -604,7 +538,7 @@ firewall-cmd --permanent --add-service=ftp
 
 #### crontab
 
-crontab [option] 파일명/유저(-e 사용시)
+> crontab [option] 파일명/유저(-e 사용시)
 
 |옵션|내용|
 |---|---|
@@ -618,25 +552,25 @@ crontab [option] 파일명/유저(-e 사용시)
 ***
 #### 모듈 관련 작업 및 커널
 
-* lsmod
-리눅스 커널에 적재된 모듈 정보를 출력하는 명령
+* lsmod    
+: 리눅스 커널에 적재된 모듈 정보를 출력하는 명령
 
-* insmod
-커널에 모듈을 적재하는 명령. 해당 모듈 파일이 존재하는 디렉터리까지 이동, 의존성이 있는 모듈인 경우에는 적재 못함.
+* insmod    
+: 커널에 모듈을 적재하는 명령. 해당 모듈 파일이 존재하는 디렉터리까지 이동, 의존성이 있는 모듈인 경우에는 적재 못함.
 
-[사용법]
+> [사용법]        
 $ insmod 모듈_파일명
 
 * rmmod
 커널에서 모듈을 제거하는 명령.
 
-[사용법]
+> [사용법]       
 $ rmmod 모듈
 
 * modprobe
 리눅스 커널에 모듈을 적재하거나 제거하는 명령. 단일모듈, 의존성이 있는 여러 모듈, 특정 디렉터리의 모든 모듈들을 적재할 수 있음.
 
-[사용법]
+> [사용법]   
 $ modprobe [option] 모듈 [기호=값]
 
 옵션
@@ -657,14 +591,18 @@ $ modprobe [option] 모듈 [기호=값]
 \# depmod는 모듈 간의 의존성을 관리하는 명령어로 위 파일과 맵 파일을 생성한다.
 
 * 커널
-시스템 자원을 소유하고 관리하는 역할
-하드웨어, 메모리, 프로세스 스케줄링을 담당하고 프로그램이 하드웨어 자원을 간접적으로 접근할 수 있도록 해줌.
-'uname -r' 명령으로 커널 버전 확인 가능
+시스템 자원을 소유하고 관리하는 역할           
+하드웨어, 메모리, 프로세스 스케줄링을 담당하고 프로그램이 하드웨어 자원을 간접적으로 접근할 수 있도록 해줌.           
+'uname -r' 명령으로 커널 버전 확인 가능              
+	
 <br>
+	
 * 커널 컴파일
 커널 컴파일은 커널 소스를 다운로드하여 사용하는 시스템에 최적화된 커널을 만드는 과정.
+	
 <br>
-* 커널 컴파일 순서
+	
+ㅁ  커널 컴파일 순서
 
 > 1. 커널 소스파일 압축해제
 > 2. 커널 소스의 설정 값 초기화(make mrproper)
@@ -676,13 +614,13 @@ grub.conf 파일 수정(make install)
 새로운 커널 사용을 위한 시스템 재부팅
 
 
-* Make Cleaning Target
+ㅁ Make Cleaning Target
 
 > - make clean : 생성된 오브젝트 파일을 제거하고 다시 configure할 때 사용
 > - make mrproper : configure 작업을 통해 생성된 오브젝트 파일 뿐만 아니라 config 파일, 다양한 백업 파일 등도 제거. 주로 사용하는 명령어.
 > - make distclean : mrproper 작업과 더불어 편집된 백업 및 패치 파일도 모두 제거
 
-* 커널 컴파일 주요 도구
+ㅁ 커널 컴파일 주요 도구
 
 > - make config : 텍스트 기반 설정 도구. y, m, n으로 설정
 > - make menuconfig : 컬러 메뉴 제공, 커서 이용. 가장 많이 사용.
@@ -718,13 +656,44 @@ grub.conf 파일 수정(make install)
 
 |옵션|설명|
 |---|---|
-|-i|각각의 ㅏㄹ인마다 logger의 프로세스 ID 기록|
+|-i|각각의 라인마다 logger의 프로세스 ID 기록|
 |-s|시스템 로그뿐만 아니라 표준 출력으로도 메세지 출력|
 |-f file|지정한 file에 로그를 출력|
 |-p pri|pri(우선순위)를 메세지와 함께 출력, 기본값은 user.notice|
 |-t tag| tag를 각각의 라인마다 기록|
 
+***
+#### htpasswd    
+: 아파치 패스워드 걸기
+사용방법
+> htpasswd [ -c ] [ -m ] [ -D ] passwdfile username
 
+> htpasswd -b [ -c ] [ -m | -d | -p | -s ] [ -D ] passwdfile username password
+
+> htpasswd -n [ -m | -d | -s | -p ] username
+
+> htpasswd -nb [ -m | -d | -s | -p ] username password
+
+
+|옵션|설명|
+|---|---|
+|-b|배치(batch) 모드를 사용한다. 예를 들어, 암호를 물어보지않고 명령행에서 받는다. 명령행에 암호가 직접 드러나므로, 이 옵션은 매우 조심해서 사용해야 한다.|
+|-c|passwdfile을 만든다. passwdfile이 이미 존재한다면, 덮어쓴다. 이 옵션을 -n 옵션과 같이 사용할 수 없다.|
+|-n|파일을 수정하지않고 결과를 표준출력으로 출력한다. 아파치가 문서이외의 곳에 생성한 암호를 저장할때 유용하다. (항상 첫번째 아규먼트인) passwdfile 아규먼트가 없기때문에 명령행 문법이 다르다. -c 옵션과 같이 사용할 수 없다.|
+|-m|MD5를 사용하여 암호를 암호화한다. Windows, Netware, TPF에서 기본값이다.|
+|-d|crypt()를 사용하여 암호를 암호화한다. Windows, Netware, TPF를 제외한 모든 플래폼에서 기본값이다. 모든 플래폼의 htpasswd가 이 형식을 지원할 수는 있지만, Windows, Netware, TPF의 httpd 서버는 이 형식을 지원하지 않는다.|
+|-s|암호를 SHA 암호화한다. LDAP 디렉토리교환형식(ldif)을 사용하여 Netscape 서버로 정보를 보내거나 거져올때 유용하다.|
+|-p|암호를 그대로 사용한다. 모든 플래폼의 htpasswd가 지원하지만, Windows, Netware, TPF의 httpd 데몬만이 일반 암호를 받는다.|
+|-D|사용자를 삭제한다. htpasswd 파일에 사용자명이 있다면 삭제한다.|
+
+- passwdfile
+사용자명과 암호를 저장하는 파일명. -c를 사용한 경우 파일이 없다면 새로 만들고, 있다면 덮어쓴다.
+
+- username
+passwdfile에 만들거나 수정할 사용자명. username이 이 파일에 없다면 항목을 추가한다. 있다면 암호를 수정한다.
+
+- password
+암호화하여 파일에 저장할 암호. 오직 -b 옵션과 같이 사용할 수 있다.
 
 ***
 #### ssh
@@ -735,37 +704,23 @@ grub.conf 파일 수정(make install)
 
  3) 사용 방법 : ssh [옵션] [주소]
 
- 4) 옵션
-
- -1 : ssh를 프로토콜 버전 1로 시도
-
- -2 : ssh를 프로토콜 버전 2로 시도
-
- -4 : IPv4 주소만 사용
-
- -6 : IPv6 주소만 사용
-
- -F configfile : 사용자 설정 파일(configfile)을 지정
-
- -I(아이) smartcard_device : 사용자 개인 RSA 키를 저장한 디바이스(smartcard_device)를 지정
-
- -i identity_file : RSA나 DSA 인증 파일(identity_file)을 지정
-
- -l login_name : 서버에 로그인할 사용자(login_name)을 지정
-
- -p port : 서버에 접속할 포트를 지정
-
- -q : 메시지를 출력하지 않음
-
- -V : 버전 정보를 출력
-
- -v : 상세한 정보를 출력. 디버깅에 유용
-
- -X : X11 forwarding 기능을 활성화. 이는 서버에 접속하여 서버의 프로그램을 클라이언트의 화면에서 실행할 수  있음
-
- -x : X11 forwarding 기능을 비활성화
-
- -y : 신뢰할만한 X11 forwarding 기능을 활성화
+|옵션|내용|
+|---|---|
+|-1 | ssh를 프로토콜 버전 1로 시도|
+|-2 | ssh를 프로토콜 버전 2로 시도|
+ |-4 | IPv4 주소만 사용|
+| -6 | IPv6 주소만 사용|
+| -F configfile| 사용자 설정 파일(configfile)을 지정|
+| -I(아이) smartcard_device | 사용자 개인 RSA 키를 저장한 디바이스(smartcard_device)를 지정|
+| -i identity_file | RSA나 DSA 인증 파일(identity_file)을 지정|
+| -l login_name | 서버에 로그인할 사용자(login_name)을 지정|
+| -p port | 서버에 접속할 포트를 지정|
+| -q | 메시지를 출력하지 않음|
+| -V | 버전 정보를 출력|
+| -v | 상세한 정보를 출력. 디버깅에 유용|
+| -X | X11 forwarding 기능을 활성화. 이는 서버에 접속하여 서버의 프로그램을 클라이언트의 화면에서 실행할 수  있음|
+| -x | X11 forwarding 기능을 비활성화|
+| -y | 신뢰할만한 X11 forwarding 기능을 활성화|
 
 ***
 #### IPTABLE
@@ -989,163 +944,38 @@ iptables-extensions man page 에서는 local network 를 벗어나는 packet 에
 
 ##### 커맨드와 옵션
 
-Rule 관련
+ㅁ Rule 관련
 
--A (–-append) : 새로운 규칙을 추가
--C (–check) : 패킷을 테스트
--D (–delete) : 규칙을 삭제
--F (–flush) : chain 으로 부터 규칙을 모두 삭제
--I (–Insert) : 새로운 규칙을 삽입
--L (–list) : 규칙을 출력
--N (–new) : 새로운 chain을 만듬
--P (–policy) : 기본정책을 변경
--R (–replace) : 새로운 규칙으로 교체
--X (–delete-chain) : chain 을 삭제
--Z (–zero) : 모든 chain의 패킷과 바이트 카운터 값을 0으로 만듬
+|옵션|내용|
+|---|---|	
+|-A (–-append) | 새로운 규칙을 추가|
+|-C (–check) | 패킷을 테스트|
+|-D (–delete) | 규칙을 삭제|
+|-F (–flush) | chain 으로 부터 규칙을 모두 삭제|
+|-I (–Insert) | 새로운 규칙을 삽입|
+|-L (–list) | 규칙을 출력|
+|-N (–new) | 새로운 chain을 만듬|
+|-P (–policy) | 기본정책을 변경|
+|-R (–replace) | 새로운 규칙으로 교체|
+|-X (–delete-chain) | chain 을 삭제|
+|-Z (–zero) | 모든 chain의 패킷과 바이트 카운터 값을 0으로 만듬|
 
 
-option 관련
-
-iptables에서 패킷을 처리할 때 만족해야 하는 조건을 가리킵니다.
+ㅁ option 관련
+: iptables에서 패킷을 처리할 때 만족해야 하는 조건을 가리킵니다.    
 즉, 이 조건을 만족시키는 패킷들만 규칙을 적용합니다.
 
--s (–source) : 출발지 IP주소나 네트워크와의 매칭
--d (–destination) : 목적지 IP주소나 네트워크와의 매칭
--p (–protocol) : 특정 프로토콜과의 매칭
--i (–in-interface) : 입력 인터페이스
--o (–out-interface) : 출력 인터페이스
-–state : 연결상태와의 매칭
-–comment : 커널 메모리 내의 규칙과 연계되는 최대 256바이트 주석
--y (–syn) : SYN 패킷을 허용하지 않음
--f(–fragment) : 두번째 이후의 조가게 대해서 규칙을 명시한다.
--t (–table) : 처리될 테이블
--j (–jump) : 규칙에 맞는 패킷을 어떻게 처리할것인가를 명시한다.
--m (–match) : 특정 모듈과의 매치
-
-***
-#### nice와 renice
-
-ㅁ nice
-: 프로세스가 실행될 떄 실행 우선순위를 조정. (NI값 변경)
-
-커다란 프로그램을 컴파일 할 떄와 같이 CPU나 메모리를 많이 쓰게 될 경우 
-
-시스템 속도를 저하시키기 떄문에 다른 프로세스에게 우선순위 값을 줄 떄 사용.
-
-- 특징
-
-① 기본 nice 값은 보통 0으로 시작한다.
-
-② -20 ~ 19 까지 순위 값을 조정할 수 있으며 , -20이 우선순위가 가장 높고 19가 가장 낮다.
-
-③ 일반 유저는 값을 증가만 할 수 있다. (우선순위가 높은 특수 프로세스를 지키기 위해)
-
-> nice [-n 조정수치] [프로세스]    
-> nice [프로세스] (기존 값에서 10 증가)
-
-ㅁ renice
-: 실행중인 프로세스에 대한 nice 값을 변경.
-
-nice는 프로세스명으로 우선순위를 조정하고 , 명령을 실행하면 새로운 프로세스가 발생하지만
-
-renice는 PID로 우선순위를 조정하고 기존의 프로세스 우선순위 값을 추가없이 바로 수정한다.
-
--특징
-
-① 기존의 NI 값에 상관없이 지정한 NI 값이 바로 설정된다. (nice와 다름)
-
-② root만이 우선순위 값을 감소할 수 있다. (범위는 -20부터 19 nice와 동일)
-
-> renice [옵션] [변경할 NI값] [PID]
-
-
 |옵션|내용|
 |---|---|
-|-u|사용자 이름 지정|
-|-g|프로세스의 그룹 ID 지정|
-
-
-***
-#### 쿼터
-
-- quotacheck
-: 디스크를 사용하고 있는 파일 시스템을 체크하여 quota 기록 파일(aquota.user, aquota.group 또는 quota.user, quota.group)을 가장 최근의 상태로 업데이트 시키는 명령어
-
-> quotacheck [option] 디렉터리명
-
-|옵션|내용|
-|---|---|
-|-a (--all)	|사용자와 그룹에 대한 쿼터를 체크한다.|
-|-m (--try-remount)	|읽기 전용 모드 등의 이유로 마운트를 하지 못할 경우에 강제로 체크할 때 사용한다. (리마운트)|
-|-n (--use-first-dquot)	|만약 쿼터파일이 손상됐으면, 복사된 사본들로 a single user나 group id가 존재하도록 할 수 있는데 그때 복사된 사본들 |중 가장 첫 번째로 검색된 것을 사용한다.|
-|-f (--force)|	쿼터 파일 초기 생성 시 인식하지 못하는 경우에 강제로 인식시킬 때 사용한다.|
-|-u (--user)|	사용자 쿼터 파일을 체크할 때 사용하는 옵션이다 (기본 옵션)|
-|-g (--group)|	그룹 쿼터 파일을 체크할 때 사용하는 옵션이다.|
-|-c (--create-files)|	기존의 생성된 쿼터 관련 파일을 읽지 않고 새롭게 초기화할 때 사용한다.|
-
-[quotacheck 사용 예]
-> quotacheck /home
-→ /home에 생성한 쿼터 파일을 체크합니다. 
-
-> quotacheck -mf /home
-→quotacheck는 원칙적으로 해당 파티션을 quotaoff한 뒤에 해야 되는데, -mf 옵션을 사용하면 quotaoff 하지 않아도 무조건 체크합니다. 
-
-> quotacheck -a
-→생성된 쿼터 파일을 찾아 체크합니다.
-
-> quotacheck -cf /home
-→/home에 있는 쿼터 파일을 초기화합니다.
-
-edquota
-: 사용자나 그룹에 쿼터를 설정할 때 사용하는 명령으로 실행하면 vi 편집기가 실행됩니다. 기본 단위가 KB이므로 10MB를제한하려면 10000이라고 입력해야 합니다.
-
-> edquota [option]
-
-|옵션|내용|
-|---|---|
-|-u (--user)	|사용자에 대한 쿼터를 설정할 때 사용하는 옵션이다 (기본 옵션)|
-|-g (--group)	|그룹에 대한 쿼터를 사용할 때 사용하는 옵션이다.|
-|-p (--project)	|프로젝트에 대한 쿼터를 사용할 때 사용하는 옵션이다.|
-|-t (--edit-period)	|Soft limit를 초과한 후부터 적용되는 시간제한(grace period)을 설정하는 옵션이다.|
-|-p (--prototype)	|특정 사용자의 쿼터를 다른 사용자에게 동일한 설정으로 적용할 때 사용하는 옵션이다.|
-|-f (--filesystem)	|주어진 파일시스템에서만 기능을 수행한다. (디폴트는 모든 파일시스템임)|
-
-
-- quota, repquota
-: 사용자 단위로 쿼터 설정 정보를 출력해주는 명령어 입니다. quota는 전체를 보여주는게 아니라 나에 관련된 즉 여기서는 ubuntu에 관련된 quota 정보를 보여주잖아요. 근데 /devhome에 설정되어 있는 즉 시스템 단위의 쿼터 정보를 보고 싶을 수도 있어요. 그럴 경우 사용하는 것이 repquota입니다. 
-
-> repquota /devhome
-→/devhome에 설정된 사용자 쿼터 정보를 모두 출력해줘.
-
-> repquota -g /home
-→/home에 설정된 그룹 쿼터 정보들을 출력해줘
-
-> quota ubuntu
-→ ubuntu 사용자의 쿼터 설정 정보를 알려줘
-
-> quota
-→ 현재 사용자의 쿼터 정보를 알려줘
-
-
-***
-#### 프린터 관련 명령어
-
-ㅁ BSD 계열
-- lpr : 프린터 출력
- > -\#: 인쇄 매수 지정
- > -P : 사용할 프린터 지정
-: 인쇄를 위해 몇몇의 초기화과정을 수행 후 제어권을 lpd데몬에게 넘겨줌
-
-- lprm : local printer remove
-: 프린터 큐에 대기중인 작업 삭제
-취소할 프린트 작업번호를 명시하지만, 생략된 경우 가장 마지막 작업 취소 작업번호 명시 시 별다른 기호 없음 (8번 취소 -> lprm 8)
-- lpc : 프린터 제어
-  
-- lpq : 큐에 있는 작업의 목록 출력
-
-
-ㅁ System V 계열
-- cancel : 취소. 무조건 작업 번호 붙여줘야 함
-- lpstat : 작업 번호 확인
-- lp : 프린터 출력
-> -n : 인쇄 매수 지정
+|-s (–source) | 출발지 IP주소나 네트워크와의 매칭|
+|-d (–destination) | 목적지 IP주소나 네트워크와의 매칭|
+|-p (–protocol) | 특정 프로토콜과의 매칭|
+|-i (–in-interface) | 입력 인터페이스|
+|-o (–out-interface) | 출력 인터페이스|
+|–state | 연결상태와의 매칭|
+|–comment | 커널 메모리 내의 규칙과 연계되는 최대 256바이트 주석|
+|-y (–syn) | SYN 패킷을 허용하지 않음|
+|-f(–fragment) | 두번째 이후의 조가게 대해서 규칙을 명시한다.|
+|-t (–table) | 처리될 테이블|
+|-j (–jump) | 규칙에 맞는 패킷을 어떻게 처리할것인가를 명시한다.|
+|-m (–match) | 특정 모듈과의 매치|
