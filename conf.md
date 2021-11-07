@@ -148,7 +148,7 @@
   DocumentRoot "/usr/local/apache/html"
   UserDir www
   DirectoryIndex index.htm index.html index.php
-  Listen 8080                     << 아래꺼와 둘중 하나만 해주면 port 설정가능
+  Listen 8080                    
   ServerName www.ihd.or.kr:8080
   ServerAdmin ihd@ihd.or.kr
 ```
@@ -556,11 +556,21 @@ REJECT자리에는 4가지가 들어간다.
 - /etc/aliases
 : 특정 계정으로 들어오는 메일을 다른 계정으로 전송되도록 설정한다.
 
+```aliases
+vi /etc/aliases
+
+webmaster: ihduser, kaituser
+admin :: include: /etc/mail/_admin
+
+new aliases
+```
+
 - /etc/mail/virtusertable
 : 하나의 메일 서버에 여러 도메인을 사용하는 환경에서 동일한 계정을 사용할 때 각각의 도메인으로 연결시킨다.
 
 ```virtusertable
 vi /etc/mail/virtusertable
+
 @ihd.or.kr  ihdadmin
 
 ihd.or.kr 도메인으로 들어오는 모든 메일을 ihdadmin 계정으로 전달.
