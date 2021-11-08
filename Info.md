@@ -170,7 +170,7 @@ Block size:               1024
 |-n|모든 질문에 대한 응답을 no로 취급|
 |-f| 파일 시스템이 이상 유무에 상관 없이 강제적으로 파일 시스템을 체크 |
 
-> fsck.ext4 -y /dev/sdb1
+> fsck.ext4 -y /dev/sdb1          
 > fsck -a /dev/sdb1
 
 ##### - XFS
@@ -416,10 +416,10 @@ nmap -sT 192.168.100.128
 | -v | 과정을 출력한다.|
 
 사용방법
->]# find /home | cpio -ocv > home.cpio               
+>]# find /home | cpio -ocv > home.cpio                 
 /home 를 home.cpio 파일로 백업한다.                     
 
->]# cpio -icdv < home.cpio                       
+>]# cpio -icdv < home.cpio                        
 home.spio의 현재 내용을 디렉터리에 복원한다.                 
 
 - dump                 
@@ -492,11 +492,13 @@ conv=notrunc  옵션을 사용하지 않는 한은, seek= 바이트 크기에 �
 
 
 사용방법
-> a.txt 파일 안에 있는 문자를 전부 소문자로 변환해서 b.txt파일로 저장한다.                     
-dd if=a.txt of=b.txt conv=lcase
+- a.txt 파일 안에 있는 문자를 전부 소문자로 변환해서 b.txt파일로 저장한다.                     
 
->/dev/sdb1의 내용을 그대로 /dev/sdc1으로 백업 진행하는데, 블록 크기는 1KB로 지정한다.            
-dd if=/dev/sdb1 of=/dev/sdc1 bs=1k
+> dd if=a.txt of=b.txt conv=lcase
+
+- /dev/sdb1의 내용을 그대로 /dev/sdc1으로 백업 진행하는데, 블록 크기는 1KB로 지정한다.            
+
+> dd if=/dev/sdb1 of=/dev/sdc1 bs=1k
 
 
 - rsync        
@@ -520,15 +522,21 @@ dd if=/dev/sdb1 of=/dev/sdc1 bs=1k
 |--progress | 파일이 전송되는 동안 전송 상황정보를 출력한다.|
 
 사용방법
+
+- /home를 그대로 유지하면서 /home5로 백업한다.
+
 > rsync -av /home /home5     
-/home를 그대로 유지하면서 /home5로 백업한다.
+
+
+- 192.168.2.20로 원격접속후 /test 파일을 압축해서 /backup로 복사한다.
 
 > rsync -avz 192.168.2.20:/test /backup    
-192.168.2.20로 원격접속후 /test 파일을 압축해서 /backup로 복사한다.
+
+
+- -e옵션은 원격지에 접속시 프로토콜을 지정한다.  (최근에는 생략하면 자동으로 ssh를 사용한다.)    
+ 192.168.2.20 원격지로 other 계정으로 접속 후 test 파일을 압축해서 복사한다.    
 
 > rsync -avz -e ssh other@192.168.2.20:/test ~/backup    
--e옵션은 원격지에 접속시 프로토콜을 지정한다.  (최근에는 생략하면 자동으로 ssh를 사용한다.)    
- 192.168.2.20 원격지로 other 계정으로 접속 후 test 파일을 압축해서 복사한다.    
 
 ***
 #### firewall-cmd
