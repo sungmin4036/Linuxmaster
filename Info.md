@@ -681,25 +681,31 @@ $ rmmod 모듈
 $ modprobe [option] 모듈 [기호=값]
 
 옵션
->-l : 사용 가능한 모듈 정보
--r : 의존성있는 모듈들을 찾아 사용안하면 제거
--c : 모듈 관련 환경 설정 파일의 내용을 전부 출력
+> -l : 사용 가능한 모듈 정보    
+> -r : 의존성있는 모듈들을 찾아 사용안하면 제거    
+> -c : 모듈 관련 환경 설정 파일의 내용을 전부 출력    
 
 
 * modinfo
 모듈 파일에 대한 정보 출력
+
 <br>
+
 * 모듈 관련 설정 파일
 부팅 시에 특정 모듈을 커널에 적재할 때 /etc/modprobe.d 디렉터리안에 '.conf'로 끝나는 모든 파일 인식
+
 <br>
+
 * 모듈 의존성 파일 : modules.dep
 모듈 간의 의존성을 기록해둔 파일로 '/lib/modules/커널버전/modules.dep' 디렉터리 안에 위치.
 이 파일 갱신하고 관리해주는 명령은 depmod
+
 \# depmod는 모듈 간의 의존성을 관리하는 명령어로 위 파일과 맵 파일을 생성한다.
 
 * 커널
-시스템 자원을 소유하고 관리하는 역할           
-하드웨어, 메모리, 프로세스 스케줄링을 담당하고 프로그램이 하드웨어 자원을 간접적으로 접근할 수 있도록 해줌.           
+: 시스템 자원을 소유하고 관리하는 역할           
+하드웨어, 메모리, 프로세스 스케줄링을 담당하고 프로그램이 하드웨어 자원을 간접적으로 접근할 수 있도록 해줌.  
+
 'uname -r' 명령으로 커널 버전 확인 가능              
 	
 <br>
@@ -1157,14 +1163,13 @@ iptables-extensions man page 에서는 local network 를 벗어나는 packet 에
 #### 커널 매개 변수(parameter) 제어   
 - 커널 파라미터란?
 : 리눅스에서 사용되는 시스템 변수들을 의미하며, 커널 변수 값을 제어하여 시스템을 운영 용도에 맞게 최적화 할 수 있는 설정 입니다.   
-커널 매개변수의 경로는 /proc/sys 디렉토리 밑에 존재하고 커널 파라미터의 절대 경로의 수정을 통해 설정 변경이 가능하지만    
-sysctl 을 통해서 간편하게 설정할 수 있습니다.
+커널 매개변수의 경로는 /proc/sys 디렉토리 밑에 존재하고 커널 파라미터의 절대 경로의 수정을 통해 설정 변경이 가능하지만 sysctl 을 통해서 간편하게 설정할 수 있습니다.
 
 1. 영구 설정 방법(재부팅 이후에도 설정 적용)
 
 1) kernel parameter 추가
 
-> vi /etc/sysctl.conf
+> vi /etc/sysctl.conf           
 > kernel.sysrq = 1
 
 
@@ -1176,12 +1181,12 @@ sysctl 을 통해서 간편하게 설정할 수 있습니다.
 
 3) 추가 설정한 파라미터 적용 확인
 
-> sysctl -a |grep kernel.sysrq
+> sysctl -a |grep kernel.sysrq            
 >  kernel.sysrq = 1
 
 or
 
-> sysctl kernel.sysrq
+> sysctl kernel.sysrq           
 > kernel.sysrq = 1
  
 
@@ -1191,37 +1196,38 @@ or
 
 1) kernel parameter 추가
 
-> sysctl -w kernel.sysreq=1
+> sysctl -w kernel.sysreq=1         
 > kernel.sysrq = 1
 
  
 
 2) 추가 설정한 파라미터 적용 확인
 
-> sysctl -a |grep kernel.sysrq
+> sysctl -a |grep kernel.sysrq          
 > kernel.sysrq = 1
 
 or
 
-> sysctl kernel.sysrq
+> sysctl kernel.sysrq          
 > kernel.sysrq = 1
 
  
 
 
-1. "sysctl -p" 와 "sysctl --system" 차이
+1. "sysctl -p" 와 "sysctl --system" 차이            
 : 위에 언급된 설정 방법이 /etc/sysctl.conf 만 해당되었다면 "--system" 옵션은 아래와 같이 모든 경로의 설정을 포함 합니다.
+
 따라서, /etc/sysctl.conf 의 설정이 아닌 연관된 모든 경로의 설정에 따로 추가를 하였다면 "--system" 옵션을 통해 적용해야 합니다.
 
 
 1) "--system" 옵션에 영향 받는 모든 파일 목록
 
-> /run/sysctl.d/*.conf
-> /etc/sysctl.d/*.conf
-> /usr/local/lib/sysctl.d/*.conf
-> usr/lib/sysctl.d/*.conf
-> /lib/sysctl.d/*.conf
-> /etc/sysctl.conf
+> - /run/sysctl.d/*.conf        
+> - /etc/sysctl.d/*.conf             
+> - /usr/local/lib/sysctl.d/*.conf             
+> - usr/lib/sysctl.d/*.conf          
+> - /lib/sysctl.d/*.conf             
+> - /etc/sysctl.conf           
  
 
 2) 설정 적용 방법
@@ -1243,16 +1249,6 @@ or
 ![image](https://user-images.githubusercontent.com/62640332/140597079-d1ed116d-948e-43cd-bf6a-4e5d152d8ae5.png)
 
 ![image](https://user-images.githubusercontent.com/62640332/140597100-f1a28cf5-97a3-493f-a092-bb717fd01671.png)
-
-
-***
-#### mail 보내는 설정 비교
-
-> vi /etc/aliases
-> webmaster ; ihduser, kaituser
-> admin :: include:/etc/mail_admin
->
-> newaliases   or  sendmail bi
 
 
 
@@ -1285,7 +1281,7 @@ or
 |c | 압축되어 있는 상태로 저장함.|
 |d | dump 명령을 통하여 백업받을 경우 백업받지 않습니다.|
 |i |  파일을 read-only로만 열 수 있게 설정합니다. 링크로 허용하지 않고 루트만이 이 속성을 제거 할 수 있습니다.|
-|s | 파일 삭제가 될 경우에 디스크 동기화가 일어나는 효고가가 발생합니다.|
+|s | 파일 삭제가 될 경우에 디스크 동기화가 일어나는 효과가 발생합니다.|
 |S | 파일이 변경 될 경우에 디스크 동기화가 일어나는 효과가 발생합니다.|
 |u | 파일이 삭제가 되엇을 경우에는 그 내용이 저장이 되며 삭제되기 전의 데이터로 복구가 가능해 집니다.|
 
